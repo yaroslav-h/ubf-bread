@@ -108,8 +108,8 @@ export default new Vuex.Store({
   actions: {
     bootstrap ({ dispatch, commit }, data) {
       dispatch('site/setIdentity', data.user)
-      commit('setUIProp', { prop: 'locales', value: data.locales })
-      commit('setUIProp', { prop: 'locale', value: data.locale })
+      commit('setUIProp', { prop: 'locales', value: data.locales || [] })
+      commit('setUIProp', { prop: 'locale', value: data.locale || 'en' })
     },
     login () {
       // TODO: add something here

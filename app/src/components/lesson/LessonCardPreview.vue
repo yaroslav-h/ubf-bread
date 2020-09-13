@@ -9,16 +9,12 @@
         <div class="h6"><fa v-if="lesson.is_intro" icon="play-circle" class="mr-2"/>{{ lesson.title }}</div>
         <div><a :href="lesson.passage_link" target="_blank"><fa icon="book-open" class="mr-2"/>{{lesson.passage}}</a></div>
       </div>
-      <div v-if="showEye">
-        <button class="btn btn-link" @click="$emit('open')" v-if="collapsed"><fa icon="eye"/></button>
-        <button class="btn btn-link" @click="$emit('close')" v-else><fa icon="times"/></button>
+      <div>
+        <router-link class="btn btn-link" :to="{name: 'Lesson', params: {id:lesson.id}}"><fa icon="eye"/></router-link>
       </div>
     </div>
     <div class="card-body">
       <div v-if="lesson.content.key_verse">{{lesson.content.key_verse}}</div>
-      <div v-if="!collapsed" class="mt-3" v-html="lesson.content.body"></div>
-      <div v-if="!collapsed && lesson.content.prayer"><strong>Prayer:</strong> {{ lesson.content.prayer }}</div>
-      <div v-if="!collapsed && lesson.content.one_word"><strong>One word:</strong> {{ lesson.content.one_word }}</div>
     </div>
     <div class="card-footer d-flex justify-content-between align-items-center" v-if="!collapsed">
       <div class="d-flex">
@@ -26,11 +22,8 @@
         <div class="ml-2"><fa icon="paper-plane"/> {{lesson.testimonies_count}}</div>
       </div>
       <div>
-        <button v-if="isLoggedIn" :disabled="isMarkingAsRead || lesson.is_read" @click="onMarkAsRead"
-                class="btn" :class="{'btn-primary': !lesson.is_read, 'btn-default': lesson.is_read}">
-          <span v-if="!lesson.is_read">Mark as read<base-fa-spinner v-if="isMarkingAsRead" class="ml-2"/></span>
-          <span v-else>Read<fa icon="check-circle" class="ml-2"/></span>
-        </button>
+        <div v-if="lesson.is_passed"><fa icon="check-circle"/> Passed</div>
+        <div v-else-if="lesson.is_read"><fa icon="check"/> Read</div>
       </div>
     </div>
   </div>
@@ -38,14 +31,12 @@
 
 <script>
 import moment from 'moment'
-import BaseFaSpinner from '@/components/base/BaseFaSpinner'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPlayCircle, faBookOpen, faEye, faTimes, faPaperPlane, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 library.add(faPlayCircle, faBookOpen, faEye, faTimes, faPaperPlane, faCheckCircle)
 
 export default {
-  name: 'LessonCard',
-  components: { BaseFaSpinner },
+  name: 'LessonCardPreview',
   props: {
     lesson: {
       required: true

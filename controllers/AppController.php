@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 
+use res\Module;
 use Yii;
 use yii\base\InvalidRouteException;
 use yii\helpers\Json;
@@ -39,7 +40,7 @@ class AppController extends Controller
 
         $app = file_get_contents(Yii::getAlias('@app/web/app.html'));
 
-        $sharedData = [];//Json::encode(Yii::$app->user->getInitialState());
+        $sharedData = Json::encode(Module::initialState());
 
         $app = implode("_sharedData = $sharedData", explode("_sharedData = null", $app));
 

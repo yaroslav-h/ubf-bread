@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class="{dark: isDarkMode}">
+  <div id="app" class="pb-3" :class="{dark: isDarkMode}">
     <router-view/>
 
     <base-dialog :title="$t('select a language')" :do-show="$store.getters.getUI.showLangSelector" :show-footer="false"
@@ -94,6 +94,12 @@ body {
   .card.mt-2 {
     margin-top: 0 !important;
   }
+  .vc-container {
+    border: none;
+  }
+}
+.vc-container {
+  border: none;
 }
 body.dark {
   background: #414c4f;
@@ -118,11 +124,36 @@ body.dark {
 
   .vc-container {
     background: #414c4f !important;
-    border-color: #414c4f !important;
     color: white;
+    border: none;
   }
   .vc-title {
     color: white;
+  }
+  .btn-default {
+    color: #b0b0b0;
+  }
+  .list-group {
+    background-color: #414c4f !important;
+    div.list-group-item {
+      background-color: #373d3e !important;
+      color: #e9e9e9;
+    }
+  }
+  a.lesson-item {
+    background-color: #414c4f !important;
+    .date, .opts {
+      color: white;
+    }
+  }
+  .main-view a {
+    color: #aed5ff;
+  }
+  .main-view a:hover {
+    color: #74b3ff;
+  }
+  .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    background-color: #215598;
   }
 }
 </style>

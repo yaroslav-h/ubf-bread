@@ -8,7 +8,7 @@
     </base-page-header>
 
     <base-page-body :is-loading="isLoadingLessons && !getLessons.length" :not-found="!isLoadingLessons && !getLessons.length">
-      <lesson-card v-for="lesson in getLessons" :key="lesson.id" :lesson="lesson" class="mt-2"/>
+      <lesson-card-preview v-for="lesson in getLessons" :key="lesson.id" :lesson="lesson" class="mt-2"/>
     </base-page-body>
 
   </main-layout>
@@ -16,15 +16,15 @@
 
 <script>
 import moment from 'moment'
-import MainLayout from '@/views/layouts/MainLayout'
 import { yyyyMmDd } from '@/helpers/momentHelper'
-import LessonCard from '@/components/lesson/LessonCard'
+import MainLayout from '@/views/layouts/MainLayout'
 import BasePageBody from '@/components/base/page/BasePageBody'
 import BasePageHeader from '@/components/base/page/BasePageHeader'
+import LessonCardPreview from '@/components/lesson/LessonCardPreview'
 
 export default {
   name: 'HomeView',
-  components: { BasePageHeader, BasePageBody, LessonCard, MainLayout },
+  components: { LessonCardPreview, BasePageHeader, BasePageBody, MainLayout },
   computed: {
     getDate () {
       return yyyyMmDd()

@@ -12,17 +12,12 @@
         </v-calendar>
       </div>
     </base-page-body>
-
-    <base-page-body class="mt-2" :is-loading="isLoadingLessons && getLessons.length === 0">
+    <base-page-body :is-loading="isLoadingLessons && getLessons.length === 0">
       <div v-if="showForDate" class="text-center mt-2 p-2 d-flex justify-content-center align-items-center">
         {{formattedDate(showForDate)}} <button class="btn btn-sm btn-link ml-2" @click="showForDate = null"><fa icon="times"/></button>
       </div>
-      <div class="mt-2">
-        <lesson-card v-for="lesson in getLessonsList"
-                     :collapsed="show !== lesson.id" :key="lesson.id"
-                     :lesson="lesson" :show-day="true" :show-eye="true"
-                     @open="show = lesson.id" @close="show = null"
-                     class="mt-2"/>
+      <div class="list-group mt-2">
+        <lesson-item class="list-group-item" v-for="lesson in getLessonsList" :key="lesson.id" :lesson="lesson"/>
       </div>
 
     </base-page-body>
@@ -35,19 +30,18 @@ import moment from 'moment'
 import MainLayout from '@/views/layouts/MainLayout'
 import Calendar from 'v-calendar/lib/components/calendar.umd'
 import BasePageBody from '@/components/base/page/BasePageBody'
-import LessonCard from '@/components/lesson/LessonCard'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import LessonItem from '@/components/lesson/LessonItem'
 library.add(faTimes)
 
 export default {
   name: 'Calendar',
-  components: { LessonCard, BasePageBody, MainLayout, vCalendar: Calendar },
+  components: { LessonItem, BasePageBody, MainLayout, vCalendar: Calendar },
   data () {
     return {
       minDate: new Date(2000, 0, 1),
       page: null,
-      show: null,
       showForDate: null
     }
   },

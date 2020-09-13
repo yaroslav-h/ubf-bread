@@ -17,32 +17,7 @@
 
       <div v-if="showChapterView" class="mt-2">
         <div class="list-group">
-          <div class="list-group-item d-flex align-items-center" v-for="lesson in getLessonsBySelectedChapterByYear" :key="lesson.id">
-            <div class="date mr-3 text-center">
-              <div>{{formatLessonDay(lesson)}}</div>
-              <div class="ws-nw">{{formatLessonMonYear(lesson)}}</div>
-            </div>
-            <div class="w-100">
-              <div>
-                <div class="h6 mb-0"><fa v-if="lesson.is_intro" icon="play-circle" class="mr-2"/>{{ lesson.title }}</div>
-                <div><a :href="lesson.passage_link" target="_blank"><fa icon="book-open" class="mr-2"/>{{lesson.passage}}</a></div>
-              </div>
-            </div>
-            <div class="d-flex align-items-center opts">
-              <div>
-                <div class="d-flex ws-nw">
-                  <div v-if="lesson.is_passed"><fa icon="check-circle"/> Passed</div>
-                  <div v-else-if="lesson.is_read"><fa icon="check"/> Read</div>
-
-                  <div class="ml-2"><fa icon="eye"/> {{lesson.user_reads_count}}</div>
-                  <div class="ml-2"><fa icon="paper-plane"/> {{lesson.testimonies_count}}</div>
-                </div>
-              </div>
-              <div class="ml-2">
-                <router-link class="btn btn-link" :to="{name: 'Lesson', params: {id:lesson.id}}"><fa icon="eye"/></router-link>
-              </div>
-            </div>
-          </div>
+          <lesson-item class="list-group-item" v-for="lesson in getLessonsBySelectedChapterByYear" :key="lesson.id" :lesson="lesson" />
         </div>
       </div>
       <div v-else>
@@ -87,15 +62,15 @@ import BasePageBody from '@/components/base/page/BasePageBody'
 import LessonsService from '@/services/LessonsService'
 import BaseFaSpinner from '@/components/base/BaseFaSpinner'
 import BasePageHeader from '@/components/base/page/BasePageHeader'
-import moment from 'moment'
 import BaseDropdownMenu from '@/components/base/BaseDropdownMenu'
+import LessonItem from '@/components/lesson/LessonItem'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCheck, faCheckCircle, faQuestion } from '@fortawesome/free-solid-svg-icons'
 library.add(faCheck, faCheckCircle, faQuestion)
 
 export default {
   name: 'ArchiveView',
-  components: { BaseDropdownMenu, BasePageHeader, BaseFaSpinner, BasePageBody, MainLayout },
+  components: { LessonItem, BaseDropdownMenu, BasePageHeader, BaseFaSpinner, BasePageBody, MainLayout },
   data () {
     return {
       isLoading: false,
@@ -141,14 +116,6 @@ export default {
     }
   },
   methods: {
-
-    formatLessonDay ({ date }) {
-      return moment(date).format('DD')
-    },
-    formatLessonMonYear ({ date }) {
-      return moment(date).format('MMM yyyy')
-    },
-
     async onLoadYear (year) {
       if (this.chapters[year] && this.chapters[year].length) return
       if (this.isLoadingsChaptersForYear[year]) return
