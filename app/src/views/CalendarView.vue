@@ -3,7 +3,7 @@
 
     <base-page-body class="mt-2">
       <div>
-        <v-calendar @dayclick="onDayClick" @update:to-page="onToPage" is-expanded :min-date="minDate" :attributes="attributes">
+        <v-calendar :locale="$store.getters.getUILangCode" @dayclick="onDayClick" @update:to-page="onToPage" is-expanded :min-date="minDate" :attributes="attributes">
           <!--<div slot="day-content" slot-scope="{day}">
             <div class="text-center">
               {{ day.day }}
@@ -11,13 +11,12 @@
           </div>-->
         </v-calendar>
       </div>
+    </base-page-body>
 
-      <div v-if="isLoadingLessons && getLessons.length === 0" class="text-center p-3 py-5"><base-fa-spinner/></div>
-
+    <base-page-body class="mt-2" :is-loading="isLoadingLessons && getLessons.length === 0">
       <div v-if="showForDate" class="text-center mt-2 p-2 d-flex justify-content-center align-items-center">
         {{formattedDate(showForDate)}} <button class="btn btn-sm btn-link ml-2" @click="showForDate = null"><fa icon="times"/></button>
       </div>
-
       <div class="mt-2">
         <lesson-card v-for="lesson in getLessonsList"
                      :collapsed="show !== lesson.id" :key="lesson.id"
@@ -37,14 +36,13 @@ import MainLayout from '@/views/layouts/MainLayout'
 import Calendar from 'v-calendar/lib/components/calendar.umd'
 import BasePageBody from '@/components/base/page/BasePageBody'
 import LessonCard from '@/components/lesson/LessonCard'
-import BaseFaSpinner from '@/components/base/BaseFaSpinner'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 library.add(faTimes)
 
 export default {
   name: 'Calendar',
-  components: { BaseFaSpinner, LessonCard, BasePageBody, MainLayout, vCalendar: Calendar },
+  components: { LessonCard, BasePageBody, MainLayout, vCalendar: Calendar },
   data () {
     return {
       minDate: new Date(2000, 0, 1),
@@ -54,6 +52,9 @@ export default {
     }
   },
   computed: {
+    isLoggedIn () {
+      return this.$store.getters['site/isLoggedIn']
+    },
     formattedDate () {
       return date => moment(date).format('dddd, MMMM Do YYYY')
     },
@@ -77,6 +78,17 @@ export default {
     },
     attributes () {
       const today = moment().startOf('day')
+
+      if (!this.isLoggedIn) {
+        return [
+          {
+            key: 'today',
+            bar: 'blue',
+            dates: new Date()
+          }
+        ]
+      }
+
       return [
         {
           key: 'today',

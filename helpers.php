@@ -85,7 +85,8 @@ function response() {
     return Yii::$app->response;
 }
 function lang() {
-    return LOCALE_UK_UA;
+    $languages = \yii\helpers\ArrayHelper::map(Yii::$app->params['availableLocales'], 'locale', 'lang');
+    return $languages[Yii::$app->language] ?? LOCALE_EN_US;
 }
 function post($name = null, $defaultValue = null) {
     return Yii::$app->request->post($name, $defaultValue);

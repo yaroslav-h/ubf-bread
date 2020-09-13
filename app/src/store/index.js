@@ -5,6 +5,7 @@ import createLogger from 'vuex/dist/logger'
 import loading from './modules/loading'
 import site from './modules/site'
 import LessonsService from '@/services/LessonsService'
+import SiteService from '@/services/SiteService'
 
 Vue.use(Vuex)
 
@@ -13,6 +14,12 @@ const debug = process.env.NODE_ENV !== 'production'
 export default new Vuex.Store({
   state: {
     errors: [],
+    UI: {
+      showLangSelector: false,
+      locales: [],
+      locale: null,
+      isDarkMode: localStorage.getItem('isDarkMode') === '1'
+    },
     lessons: {},
     lessonsIdsByDate: {},
     lessonsIdsByMonth: {},
@@ -22,6 +29,12 @@ export default new Vuex.Store({
     addError (state, error) {
       error.time = new Date().getTime()
       state.errors.unshift(error)
+    },
+    setUIProp (state, { prop, value }) {
+      state.UI[prop] = value
+      if (prop === 'isDarkMode') {
+        localStorage.setItem('isDarkMode', (value ? '1' : '0'))
+      }
     },
     setLessons (state, items) {
       items.forEach(item => {
@@ -69,6 +82,14 @@ export default new Vuex.Store({
     }
   },
   getters: {
+    getUI: state => state.UI,
+    getUILangLocale: state => state.UI.locale,
+    getUIIsDarkMode: state => state.UI.isDarkMode,
+    getUILangCode: (state, getters) => {
+      const lang = state.UI.locales.find(l => l.locale === getters.getUILangLocale)
+      return lang?.code || 'en'
+    },
+
     getLesson: state => id => state.lessons[id] || null,
     getLessonsIdsByDate: state => date => state.lessonsIdsByDate[date] || [],
     getLessonsIdsByMonth: state => date => state.lessonsIdsByMonth[date] || [],
@@ -85,8 +106,10 @@ export default new Vuex.Store({
     isMarkingLessonAsRead: (_1, _2, _3, rootGetters) => id => rootGetters['loading/has']('markLessonAsRead', id)
   },
   actions: {
-    bootstrap ({ dispatch }, data) {
+    bootstrap ({ dispatch, commit }, data) {
       dispatch('site/setIdentity', data.user)
+      commit('setUIProp', { prop: 'locales', value: data.locales })
+      commit('setUIProp', { prop: 'locale', value: data.locale })
     },
     login () {
       // TODO: add something here
@@ -159,6 +182,24 @@ export default new Vuex.Store({
     },
     addError ({ commit }, error) {
       commit('addError', error)
+    },
+    uiShowLangSelector ({ commit }) {
+      commit('setUIProp', { prop: 'showLangSelector', value: true })
+    },
+    uiCloseLangSelector ({ commit }) {
+      commit('setUIProp', { prop: 'showLangSelector', value: false })
+    },
+    setUILangCode ({ commit, getters }, code) {
+      const lang = getters.getUI.locales.find(l => l.code === code)
+      if (lang) {
+        commit('setUIProp', { prop: 'locale', value: lang.locale })
+        SiteService.setLocale(lang.locale).then(() => {
+          window.location.reload()
+        })
+      }
+    },
+    setUIIsDarkMode ({ commit }, is) {
+      commit('setUIProp', { prop: 'isDarkMode', value: is })
     }
   },
   modules: {

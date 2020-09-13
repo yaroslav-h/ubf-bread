@@ -4,6 +4,7 @@
 namespace res\controllers;
 
 
+use app\components\actions\SetLocale;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
@@ -42,6 +43,13 @@ class SiteController extends Controller
             'signup' => ['post'],
             'logout' => ['post'],
             'recover-password' => ['post'],
+        ];
+    }
+
+    public function actions()
+    {
+        return [
+            'set-locale' => SetLocale::class
         ];
     }
 

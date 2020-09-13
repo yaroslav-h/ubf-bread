@@ -23,22 +23,22 @@ const routes = [
   {
     path: '/calendar',
     name: 'Calendar',
-    component: () => import('@/views/CalendarView.vue')
+    component: () => import('@/views/CalendarView')
   },
   {
     path: '/search',
     name: 'Search',
-    component: () => import('@/views/SearchView.vue')
+    component: () => import('@/views/SearchView')
   },
   {
     path: '/archive',
     name: 'Archive',
-    component: () => import('@/views/ArchiveView.vue')
+    component: () => import('@/views/ArchiveView')
   },
   {
     path: '/archive/:chapter',
     name: 'ArchiveChapter',
-    component: () => import('@/views/ArchiveView.vue')
+    component: () => import('@/views/ArchiveView')
   },
   {
     path: '/lesson/:id',
@@ -46,9 +46,14 @@ const routes = [
     component: () => import('@/views/LessonView')
   },
   {
+    path: '/about',
+    name: 'About',
+    component: () => import('@/views/AboutView')
+  },
+  {
     path: '/profile',
     name: 'Profile',
-    component: () => import('@/views/ProfileView.vue'),
+    component: () => import('@/views/ProfileView'),
     beforeEnter: loginRequired
   },
   {
@@ -56,6 +61,12 @@ const routes = [
     name: 'Login',
     component: () => import('@/views/auth/LoginView'),
     beforeEnter: guestRequired
+  },
+  {
+    path: '/logout',
+    name: 'Logout',
+    component: () => import('@/views/auth/LogoutView'),
+    beforeEnter: loginRequired
   }
 ]
 

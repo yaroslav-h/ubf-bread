@@ -23,6 +23,8 @@ class Module extends \yii\base\Module
     {
         return [
             'user' => User::findOne(['id' => getMyId()]),
+            'locale' => Yii::$app->language,
+            'locales' => Yii::$app->params['availableLocales']
         ];
     }
 

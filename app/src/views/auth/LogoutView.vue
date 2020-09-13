@@ -20,13 +20,13 @@
 import { VueTyper } from 'vue-typer'
 
 export default {
-  name: 'LogoutPage',
+  name: 'LogoutView',
   components: {
     VueTyper
   },
   methods: {
     onLogout () {
-      this.$router.push({ name: 'Login' })
+      this.$router.push({ name: 'Home' })
     }
   },
   mounted () {

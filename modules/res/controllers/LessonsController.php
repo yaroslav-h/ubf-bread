@@ -7,7 +7,6 @@ namespace res\controllers;
 use res\Controller;
 use res\models\Lesson;
 use app\components\ActiveDataProvider;
-use yii\db\Query;
 use yii\web\ForbiddenHttpException;
 use yii\web\ServerErrorHttpException;
 

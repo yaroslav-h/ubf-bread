@@ -18,6 +18,10 @@ export default {
     }).catch(handleApiError)
   },
 
+  async setLocale (locale) {
+    return await axios.post(`${BASE_URL}/set-locale`, null, { params: { locale } }).catch(handleApiError)
+  },
+
   async subscribe (data) {
     return await axios.post(`${BASE_URL}/subscribe`, {
       type: 'web_push',

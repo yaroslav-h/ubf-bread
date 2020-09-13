@@ -13,5 +13,10 @@ return [
         LOCALE_UK_UA => 'uk-UA',
         LOCALE_EN_US => 'en-US',
         LOCALE_RU_RU => 'ru-RU',
+    ],
+    'availableLocales' => [
+        ['code' => 'uk', 'locale' => 'uk-UA', 'name' => 'Ukrainian', 'lang' => 1],
+        ['code' => 'ru', 'locale' => 'ru-RU', 'name' => 'Russian', 'lang' => 3],
+        ['code' => 'en', 'locale' => 'en-US', 'name' => 'English', 'lang' => 2],
     ]
 ];

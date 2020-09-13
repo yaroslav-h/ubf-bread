@@ -22,8 +22,8 @@ class Lesson extends \app\models\Lesson
     {
         $ids = ArrayHelper::getColumn($models, 'id');
 
-        $read_lessons_ids = LessonReadByUser::find()->select('lesson_id')->where(['lesson_id' => $ids, 'user_id' => getMyId()])->column();
-        $pass_lessons_ids = Testimony::find()->select('lesson_id')->where(['lesson_id' => $ids, 'created_by' => getMyId()])->column();
+        $read_lessons_ids = getMyId() ? LessonReadByUser::find()->select('lesson_id')->where(['lesson_id' => $ids, 'user_id' => getMyId()])->column() : [];
+        $pass_lessons_ids = getMyId() ? Testimony::find()->select('lesson_id')->where(['lesson_id' => $ids, 'created_by' => getMyId()])->column() : [];
 
         foreach ($ids as $id) {
             self::$_is_read[$id] = in_array($id, $read_lessons_ids);

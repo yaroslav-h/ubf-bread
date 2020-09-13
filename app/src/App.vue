@@ -1,8 +1,50 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{dark: isDarkMode}">
     <router-view/>
+
+    <base-dialog :title="$t('select a language')" :do-show="$store.getters.getUI.showLangSelector" :show-footer="false"
+                 @close="$store.dispatch('uiCloseLangSelector')">
+      <div class="list-group">
+        <a @click.prevent="setLocale(locale.code)" href="#" v-for="locale in $store.getters.getUI.locales" :key="locale.code" class="list-group-item" :class="{active: locale.locale === $store.getters.getUILangLocale}">
+          <span style="text-transform: uppercase">{{locale.code}}</span> - {{locale.name}}
+        </a>
+      </div>
+    </base-dialog>
+
   </div>
 </template>
+
+<script>
+import BaseDialog from '@/components/base/BaseDialog'
+export default {
+  name: 'App',
+  components: { BaseDialog },
+  methods: {
+    setLocale (code) {
+      this.$store.dispatch('setUILangCode', code)
+      this.$root.$i18n.locale = this.$store.getters.getUILangCode
+      this.$store.dispatch('uiCloseLangSelector')
+    }
+  },
+  computed: {
+    isDarkMode () {
+      return this.$store.getters.getUIIsDarkMode
+    }
+  },
+  watch: {
+    isDarkMode: {
+      immediate: true,
+      handler (val) {
+        if (val) {
+          document.body.classList.add('dark')
+        } else {
+          document.body.classList.remove('dark')
+        }
+      }
+    }
+  }
+}
+</script>
 
 <style lang="scss">
 @import "node_modules/bootstrap/scss/bootstrap.scss";
@@ -51,6 +93,36 @@ body {
   }
   .card.mt-2 {
     margin-top: 0 !important;
+  }
+}
+body.dark {
+  background: #414c4f;
+}
+#app.dark {
+  .header {
+    background: #414c4f !important;
+    color: white;
+  }
+  .card {
+    background: #373d3e !important;
+    color: white;
+    .card-header {
+      background: #2f3434 !important;
+      color: white;
+    }
+  }
+  .modal-content {
+    background-color: #373d3e !important;
+    color: white;
+  }
+
+  .vc-container {
+    background: #414c4f !important;
+    border-color: #414c4f !important;
+    color: white;
+  }
+  .vc-title {
+    color: white;
   }
 }
 </style>

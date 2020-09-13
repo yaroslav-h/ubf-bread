@@ -7,7 +7,7 @@
       </div>
     </base-page-header>
 
-    <base-page-body :is-loading="isLoadingLessons">
+    <base-page-body :is-loading="isLoadingLessons && !getLessons.length" :not-found="!isLoadingLessons && !getLessons.length">
       <lesson-card v-for="lesson in getLessons" :key="lesson.id" :lesson="lesson" class="mt-2"/>
     </base-page-body>
 

@@ -7,12 +7,18 @@
 
         <div class="uncollapse">
           <ul class="navbar-nav" style="margin-left: auto">
-            <router-link v-if="isLoggedIn" :to="{ name: 'Profile'}" class="profile">
-              <user-avatar :user="user" size="30"/>
-            </router-link>
-            <router-link v-else :to="{ name: 'Login' }" class="login">
-              <fa icon="sign-in-alt"/>
-            </router-link>
+
+            <li class="nav-item">
+              <a class="nav-link ws-nw px-3" href="#" @click.prevent="$store.dispatch('uiShowLangSelector')">
+                <fa icon="globe"/>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link ws-nw px-3" href="#" @click.prevent="$store.dispatch('setUIIsDarkMode', !isDarkMode)">
+                <fa :icon="isDarkMode ? 'sun' : 'moon'"/>
+              </a>
+            </li>
+
           </ul>
         </div>
 
@@ -21,26 +27,36 @@
             <!--<router-link tag="li" :to="{ name: 'PostCreate' }" class="nav-item" active-class="active">
                 <a class="nav-link"><fa icon="plus"/></a>
             </router-link>-->
-          </ul>
-          <ul class="navbar-nav my-2 my-md-0">
             <router-link tag="li" :to="{ name: 'Calendar' }" class="nav-item" exact-active-class="active">
-              <a class="nav-link"><fa icon="calendar"/> Calendar</a>
+              <a class="nav-link"><fa icon="calendar"/> {{ $t('calendar') }}</a>
             </router-link>
             <router-link tag="li" :to="{ name: 'Archive' }" class="nav-item" active-class="active">
-              <a class="nav-link"><fa icon="archive"/> Archive</a>
+              <a class="nav-link"><fa icon="archive"/> {{ $t('archive') }}</a>
             </router-link>
+            <router-link tag="li" :to="{ name: 'About' }" class="nav-item" active-class="active">
+              <a class="nav-link"><fa icon="info-circle"/> {{ $t('about') }}</a>
+            </router-link>
+          </ul>
+          <ul class="navbar-nav my-2 my-md-0">
+
+            <router-link v-if="isLoggedIn" tag="li" :to="{ name: 'Profile' }" class="nav-item" active-class="active">
+              <a class="nav-link"><fa icon="user"/> {{ user.name.substr(0, 6) }}</a>
+            </router-link>
+
+            <router-link v-if="!isLoggedIn" tag="li" :to="{ name: 'Login' }" class="nav-item" exact-active-class="active">
+              <a class="nav-link"><fa icon="sign-in-alt"/> {{ $t('login') }}</a>
+            </router-link>
+
             <li class="nav-item">
-              <a class="nav-link"><fa icon="globe"/> UA</a>
+              <a class="nav-link ws-nw" href="#" @click.prevent="$store.dispatch('uiShowLangSelector')"><fa icon="globe"/>
+                {{ $store.getters.getUILangCode.toUpperCase() }}</a>
             </li>
-            <router-link v-if="isLoggedIn" tag="li" :to="{ name: 'Profile' }" class="nav-item nav-profile-item ml-2"
-                         active-class="active">
-              <a class="nav-link" style="width: 40px; height: 40px; padding: 0">
-                <user-avatar :user="user" size="36"/>
+            <li class="nav-item">
+              <a class="nav-link ws-nw" href="#" @click.prevent="$store.dispatch('setUIIsDarkMode', !isDarkMode)">
+                <fa :icon="isDarkMode ? 'sun' : 'moon'"/>
               </a>
-            </router-link>
-            <router-link v-else tag="li" :to="{ name: 'Login' }" class="nav-item" exact-active-class="active">
-              <a class="nav-link"><fa icon="sign-in-alt"/></a>
-            </router-link>
+            </li>
+
           </ul>
         </div>
       </div>
@@ -55,7 +71,6 @@
 </template>
 
 <script>
-import UserAvatar from '@/components/user/UserAvatar'
 import MenuBottomBlock from '@/views/layouts/MenuBottomBlock'
 import { scrollToTop } from '@/helpers/window'
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -72,18 +87,16 @@ import {
   faUser,
   faBookOpen,
   faArchive,
-  faGlobe
+  faGlobe,
+  faInfoCircle,
+  faSun,
+  faMoon
 } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faGlobe, faArchive, faBookOpen, faPlus, faCalendar, faSearch, faCog, faSignOutAlt, faBell, faTimes, faEllipsisV, faBars, faUser)
-
-// import UserPhoto from '@/components/user/UserPhoto'
+library.add(faSun, faMoon, faInfoCircle, faGlobe, faArchive, faBookOpen, faPlus, faCalendar, faSearch, faCog, faSignOutAlt, faBell, faTimes, faEllipsisV, faBars, faUser)
 
 export default {
   name: 'main-layout',
   components: {
-    UserAvatar,
-    // UserPhoto,
     MenuBottomBlock
   },
   data () {
@@ -107,6 +120,9 @@ export default {
     },
     user () {
       return this.$store.getters['site/identity']
+    },
+    isDarkMode () {
+      return this.$store.getters.getUIIsDarkMode
     },
 
     showMobileMenu () {

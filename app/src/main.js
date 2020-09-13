@@ -4,8 +4,9 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import axios from 'axios'
-
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import i18n from './i18n'
+import moment from 'moment'
 Vue.component('fa', FontAwesomeIcon)
 
 Vue.config.productionTip = false
@@ -36,7 +37,10 @@ window.addEventListener('beforeunload', () => {
 const bootstrap = (state) => {
   axios.defaults.headers.common['X-CSRF-Token'] = state?.csrf
   store.dispatch('bootstrap', state)
+  i18n.locale = store.getters.getUILangCode
+  moment.locale(i18n.locale)
   new Vue({
+    i18n,
     router,
     store,
     render: h => h(App)

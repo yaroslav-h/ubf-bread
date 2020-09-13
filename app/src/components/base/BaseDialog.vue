@@ -2,7 +2,7 @@
     <div>
         <div class="modal-backdrop fade" v-if="isShown" :class="{show:isShown}"></div>
 
-        <div class="modal fade" v-if="isShown" :class="{show:isShown, 'as-menu': asMenu}">
+        <div class="modal fade" @click.self="close" v-if="isShown" :class="{show:isShown, 'as-menu': asMenu}">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -18,7 +18,7 @@
                         <slot name="actions"></slot>
                         <button type="button" class="btn btn-link" @click.prevent="close">Cancel</button>
                     </div>
-                    <div class="modal-footer" v-else>
+                    <div class="modal-footer" v-else-if="showFooter">
                         <button type="button" class="btn btn-sm btn-default mr-auto" @click.prevent="close">Cancel</button>
                         <slot name="actions"></slot>
                     </div>
@@ -41,7 +41,17 @@ export default {
       type: Boolean,
       default: true
     },
+    showFooter: {
+      required: false,
+      type: Boolean,
+      default: true
+    },
     asMenu: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    doShow: {
       required: false,
       type: Boolean,
       default: false
@@ -49,7 +59,12 @@ export default {
   },
   data () {
     return {
-      isShown: false
+      show_local: false
+    }
+  },
+  computed: {
+    isShown () {
+      return this.show_local || this.doShow
     }
   },
   watch: {
@@ -63,10 +78,11 @@ export default {
   },
   methods: {
     show () {
-      this.isShown = true
+      this.show_local = true
     },
     close () {
-      this.isShown = false
+      this.show_local = false
+      this.$emit('close')
     }
   },
   mounted () {

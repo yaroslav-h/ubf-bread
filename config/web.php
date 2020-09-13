@@ -20,6 +20,11 @@ $config = [
         '@res'   => '@app/modules/res',
         '@admin' => '@app/modules/admin',
     ],
+    'on beforeRequest' => function () {
+        if(request()->cookies->get('_locale')) {
+            Yii::$app->language = request()->cookies->get('_locale')->value;
+        }
+    },
     'components' => [
         'request' => [
             'class' => 'app\components\Request',
