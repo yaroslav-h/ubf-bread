@@ -1,16 +1,14 @@
 <template>
   <main-layout>
 
-    <base-page-header v-if="showChapterView" :has-back-btn="true">
+    <base-page-header v-if="showChapterView" :homeLinkTo="{to:{name: 'Archive'}, label: 'Archive'}" :has-back-btn="true">
       <div class="d-flex align-items-center">
         <div class="w-100">{{ showChapterName }}</div>
-        <div class="btn-group">
-          <button type="button" @click="showDropdown = !showDropdown" class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{ year || 'All' }} ({{getLessonsBySelectedChapterByYear.length}})
-          </button>
-          <div class="dropdown-menu dropdown-menu-right" :class="{show: showDropdown}">
+        <div>
+          <base-dropdown-menu header="Select a year" dir="right" icon="" :label="(yearView || 'All') + ` (${getLessonsBySelectedChapterByYear.length})`">
+            <router-link :to="{name:'ArchiveChapter', params: {chapter: showChapterName}}" key="0" class="dropdown-item">All</router-link>
             <router-link :to="{name:'ArchiveChapter', params: {chapter: showChapterName}, query: {year:yyyy}}" v-for="yyyy in [...getYearsBySelectedChapter].reverse()" :key="yyyy" class="dropdown-item">{{ yyyy }}</router-link>
-          </div>
+          </base-dropdown-menu>
         </div>
       </div>
     </base-page-header>
@@ -20,27 +18,29 @@
       <div v-if="showChapterView" class="mt-2">
         <div class="list-group">
           <div class="list-group-item d-flex align-items-center" v-for="lesson in getLessonsBySelectedChapterByYear" :key="lesson.id">
-            <div class="mr-3 text-center">
+            <div class="date mr-3 text-center">
               <div>{{formatLessonDay(lesson)}}</div>
               <div class="ws-nw">{{formatLessonMonYear(lesson)}}</div>
             </div>
             <div class="w-100">
               <div>
-                <div class="h6"><fa v-if="lesson.is_intro" icon="play-circle" class="mr-2"/>{{ lesson.title }}</div>
+                <div class="h6 mb-0"><fa v-if="lesson.is_intro" icon="play-circle" class="mr-2"/>{{ lesson.title }}</div>
                 <div><a :href="lesson.passage_link" target="_blank"><fa icon="book-open" class="mr-2"/>{{lesson.passage}}</a></div>
               </div>
             </div>
-            <div>
-              <div class="d-flex ws-nw">
-                <div v-if="lesson.is_passed"><fa icon="check-circle"/> Passed</div>
-                <div v-else-if="lesson.is_read"><fa icon="check"/> Read</div>
+            <div class="d-flex align-items-center opts">
+              <div>
+                <div class="d-flex ws-nw">
+                  <div v-if="lesson.is_passed"><fa icon="check-circle"/> Passed</div>
+                  <div v-else-if="lesson.is_read"><fa icon="check"/> Read</div>
 
-                <div class="ml-2"><fa icon="eye"/> {{lesson.user_reads_count}}</div>
-                <div class="ml-2"><fa icon="paper-plane"/> {{lesson.testimonies_count}}</div>
+                  <div class="ml-2"><fa icon="eye"/> {{lesson.user_reads_count}}</div>
+                  <div class="ml-2"><fa icon="paper-plane"/> {{lesson.testimonies_count}}</div>
+                </div>
               </div>
-            </div>
-            <div class="ml-2">
-              <router-link class="btn btn-link" :to="{name: 'Lesson', params: {id:lesson.id}}"><fa icon="eye"/></router-link>
+              <div class="ml-2">
+                <router-link class="btn btn-link" :to="{name: 'Lesson', params: {id:lesson.id}}"><fa icon="eye"/></router-link>
+              </div>
             </div>
           </div>
         </div>
@@ -70,7 +70,7 @@
               </li>
             </ul>
             <div v-else class="text-center p-3">
-              <base-fa-spinner/> loading chapters for {{ year }} year...
+              <base-fa-spinner/>
             </div>
           </div>
         </div>
@@ -88,17 +88,19 @@ import LessonsService from '@/services/LessonsService'
 import BaseFaSpinner from '@/components/base/BaseFaSpinner'
 import BasePageHeader from '@/components/base/page/BasePageHeader'
 import moment from 'moment'
+import BaseDropdownMenu from '@/components/base/BaseDropdownMenu'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCheck, faCheckCircle, faQuestion } from '@fortawesome/free-solid-svg-icons'
 library.add(faCheck, faCheckCircle, faQuestion)
 
 export default {
   name: 'ArchiveView',
-  components: { BasePageHeader, BaseFaSpinner, BasePageBody, MainLayout },
+  components: { BaseDropdownMenu, BasePageHeader, BaseFaSpinner, BasePageBody, MainLayout },
   data () {
     return {
       isLoading: false,
       year: 0,
+      yearView: 0,
       years: [],
       chapters: {},
       isLoadingsChaptersForYear: {},
@@ -127,8 +129,8 @@ export default {
       return this.$store.getters.getLessonsByChapter(this.showChapterName)
     },
     getLessonsBySelectedChapterByYear () {
-      return this.year ? this.getLessonsBySelectedChapter.filter(l => {
-        return +(l.date.split('-')[0]) === +this.year
+      return this.yearView ? this.getLessonsBySelectedChapter.filter(l => {
+        return +(l.date.split('-')[0]) === +this.yearView
       }) : this.getLessonsBySelectedChapter
     },
     getYearsBySelectedChapter () {
@@ -179,10 +181,9 @@ export default {
       if (this.$route.name === 'Archive') {
         this.onLoad()
       } else if (this.$route.name === 'ArchiveChapter') {
-        console.log(this.$route)
         this.showChapterView = true
         this.showChapterName = this.$route.params.chapter
-        this.year = this.$route.query.year
+        this.yearView = this.$route.query.year
         if (this.getLessonsBySelectedChapter.length === 0) {
           this.$store.dispatch('loadLessonsByChapter', this.showChapterName)
         }
@@ -233,5 +234,22 @@ export default {
       width: 100%;
     }
   }
+  .list-group-item {
+    flex-direction: column;
+    align-items: flex-start !important;
+    .date {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start !important;
+      > div {
+        margin-right: .5rem;
+      }
+    }
+    .opts {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
 }
+
 </style>

@@ -84,16 +84,14 @@ class Lesson extends \app\models\Lesson
     }
 
     /**
-     * @param $lang
      * @param $name
      * @return Query
      */
-    public static function findByPassageName($lang, $name)
+    public static function findByPassageName($name)
     {
         return (new Query())
             ->select(['id' => 'if(parent_id is null, id, parent_id)'])
             ->from(Lesson::tableName())
-            ->where("passage_json like :name", [':name' => '["' . $name . '%'])
-            ->andWhere(['lang' => $lang]);
+            ->where("passage_json like :name", [':name' => '["' . $name . '%']);
     }
 }

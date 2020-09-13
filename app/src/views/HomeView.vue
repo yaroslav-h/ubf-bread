@@ -8,9 +8,7 @@
     </base-page-header>
 
     <base-page-body :is-loading="isLoadingLessons">
-      <div class="mt-2">
-        <lesson-card v-for="lesson in getLessons" :key="lesson.id" :lesson="lesson" class="mb-2"/>
-      </div>
+      <lesson-card v-for="lesson in getLessons" :key="lesson.id" :lesson="lesson" class="mt-2"/>
     </base-page-body>
 
   </main-layout>

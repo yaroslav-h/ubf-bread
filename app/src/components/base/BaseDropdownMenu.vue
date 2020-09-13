@@ -2,11 +2,11 @@
     <div class="btn-dropdown-menu">
         <!--<div class="btn-group-backdrop-header" :class="{'show': isShown}" @click="isShown = false"></div>-->
         <div class="btn-group-backdrop" :class="{'show': isShown}" @click="isShown = false"></div>
-        <div class="btn-group" :class="{'show': isShown, 'to-left': dir === 'left', 'to-right': dir === 'right'}">
-            <button type="button" class="btn btn-sm btn-link btn-toggle" :class="{'mob-open-icon-hidden': mobHidOpeIco}" @click="onToggle">
-                <fa :icon="buttonIcon" :spin="isLoading" />
+        <div class="btn-group" :class="{'show': isShown}">
+            <button type="button" class="btn btn-sm btn-link dropdown-toggle ws-nw" @click="onToggle">
+              {{label}} <fa v-if="icon" :icon="buttonIcon" :spin="isLoading" />
             </button>
-            <div class="dropdown-menu" :class="{'show': isShown}">
+            <div class="dropdown-menu" :class="{'show': isShown, 'dropdown-menu-right': dir === 'right'}">
                 <h6 v-if="header" class="dropdown-header">{{ header }}</h6>
                 <div v-if="header" class="dropdown-divider"></div>
 
@@ -34,6 +34,11 @@ export default {
       required: false,
       type: String,
       default: 'ellipsis-v'
+    },
+    label: {
+      required: false,
+      type: String,
+      default: ''
     },
     dir: {
       required: false,
@@ -70,6 +75,9 @@ export default {
   watch: {
     isShown (value) {
       this.$emit('show', value)
+    },
+    '$route' () {
+      this.close()
     }
   },
   methods: {
@@ -102,20 +110,13 @@ export default {
         width: 100%;
         height: 100%;
     }
-
-    .btn-group {
-    }
-    .btn-group .btn {
-        width: 31px;
-        text-align: center;
-    }
     .btn-group.show .btn {
         z-index: 1005;
     }
     .btn-group.show {
         z-index: 1501;
     }
-    .dropdown-menu button {
+    /*.dropdown-menu button {
         display: block;
         cursor: pointer;
         padding: .25rem;
@@ -128,7 +129,7 @@ export default {
         background-color: transparent;
         border: 0;
         outline: none;
-    }
+    }*/
 
     .dropdown-menu button:disabled {
         cursor: default;
@@ -141,11 +142,11 @@ export default {
         background-color: #f8f9fa;
     }
 
-    .dropdown-menu {
+    /*.dropdown-menu {
         top: -4px;
         left: initial;
         padding: 5px;
-    }
+    }*/
 
     .to-left .dropdown-menu {
         right: -4px;
@@ -166,16 +167,9 @@ export default {
     }
 
     .dropdown-header {
-        padding: .25rem;
+        padding: 0.25rem 1.5rem;
     }
     .dropdown-divider  {
         margin: .25rem 0;
     }
-
-    @media (max-width: 767px) {
-        .mob-open-icon-hidden .fa-pencil {
-            opacity: 0;
-        }
-    }
-
 </style>

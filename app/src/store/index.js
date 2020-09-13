@@ -78,6 +78,7 @@ export default new Vuex.Store({
     getLessonsByMonth: (state, getters) => date => getters.getLessonsIdsByMonth(date).map(id => getters.getLesson(id)),
     getLessonsByChapter: (state, getters) => chapter => getters.getLessonsIdsByChapter(chapter).map(id => getters.getLesson(id)),
 
+    isLoadingLessonById: (_1, _2, _3, rootGetters) => id => rootGetters['loading/has']('loadLessonById', id),
     isLoadingLessonsByDate: (_1, _2, _3, rootGetters) => date => rootGetters['loading/has']('loadLessonsByDate', date),
     isLoadingLessonsByMonth: (_1, _2, _3, rootGetters) => date => rootGetters['loading/has']('loadLessonsByMonth', date),
     isLoadingLessonsByChapter: (_1, _2, _3, rootGetters) => chapter => rootGetters['loading/has']('isLoadingLessonsByChapter', chapter),
@@ -90,14 +91,32 @@ export default new Vuex.Store({
     login () {
       // TODO: add something here
     },
+    async loadLessonById ({ dispatch, commit, getters }, id) {
+      if (getters.isLoadingLessonById(id)) {
+        return null
+      }
+      dispatch('loading/start', `loadLessonById/${id}`, { root: true })
+      try {
+        const { data } = await LessonsService.view(id)
+        commit('setLessons', [data])
+        commit('setLessonsIdsByDate', [data])
+      } catch (err) {
+        console.error(err)
+      }
+      dispatch('loading/end', `loadLessonById/${id}`, { root: true })
+    },
     async loadLessonsByDate ({ dispatch, commit, getters }, date) {
       if (getters.isLoadingLessonsByDate(date)) {
         return null
       }
       dispatch('loading/start', `loadLessonsByDate/${date}`, { root: true })
-      const { data } = await LessonsService.byDate(date)
-      commit('setLessons', data)
-      commit('setLessonsIdsByDate', data)
+      try {
+        const { data } = await LessonsService.byDate(date)
+        commit('setLessons', data)
+        commit('setLessonsIdsByDate', data)
+      } catch (err) {
+        console.error(err)
+      }
       dispatch('loading/end', `loadLessonsByDate/${date}`, { root: true })
     },
     async loadLessonsByMonth ({ dispatch, commit, getters }, date) {
@@ -105,10 +124,14 @@ export default new Vuex.Store({
         return null
       }
       dispatch('loading/start', `loadLessonsByMonth/${date}`, { root: true })
-      const { data } = await LessonsService.byMonth(date + '-01')
-      commit('setLessons', data)
-      commit('setLessonsIdsByDate', data)
-      commit('setLessonsIdsByMonth', data)
+      try {
+        const { data } = await LessonsService.byMonth(date + '-01')
+        commit('setLessons', data)
+        commit('setLessonsIdsByDate', data)
+        commit('setLessonsIdsByMonth', data)
+      } catch (err) {
+        console.error(err)
+      }
       dispatch('loading/end', `loadLessonsByMonth/${date}`, { root: true })
     },
     async loadLessonsByChapter ({ dispatch, commit, getters }, chapter) {
@@ -116,9 +139,13 @@ export default new Vuex.Store({
         return null
       }
       dispatch('loading/start', `loadLessonsByChapter/${chapter}`, { root: true })
-      const { data } = await LessonsService.byChapter(chapter)
-      commit('setLessons', data)
-      commit('setLessonsIdsByChapter', { chapter, items: data })
+      try {
+        const { data } = await LessonsService.byChapter(chapter)
+        commit('setLessons', data)
+        commit('setLessonsIdsByChapter', { chapter, items: data })
+      } catch (err) {
+        console.error(err)
+      }
       dispatch('loading/end', `loadLessonsByMonth/${chapter}`, { root: true })
     },
     async markLessonAsRead ({ dispatch, commit, getters }, id) {

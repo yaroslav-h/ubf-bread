@@ -45,5 +45,12 @@ body {
   .col-sm-12.mt-4 {
     margin-top: .25rem !important;
   }
+
+  .card {
+    border-radius: 0;
+  }
+  .card.mt-2 {
+    margin-top: 0 !important;
+  }
 }
 </style>

@@ -29,6 +29,9 @@
             <router-link tag="li" :to="{ name: 'Archive' }" class="nav-item" active-class="active">
               <a class="nav-link"><fa icon="archive"/> Archive</a>
             </router-link>
+            <li class="nav-item">
+              <a class="nav-link"><fa icon="globe"/> UA</a>
+            </li>
             <router-link v-if="isLoggedIn" tag="li" :to="{ name: 'Profile' }" class="nav-item nav-profile-item ml-2"
                          active-class="active">
               <a class="nav-link" style="width: 40px; height: 40px; padding: 0">
@@ -68,10 +71,11 @@ import {
   faBars,
   faUser,
   faBookOpen,
-  faArchive
+  faArchive,
+  faGlobe
 } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faArchive, faBookOpen, faPlus, faCalendar, faSearch, faCog, faSignOutAlt, faBell, faTimes, faEllipsisV, faBars, faUser)
+library.add(faGlobe, faArchive, faBookOpen, faPlus, faCalendar, faSearch, faCog, faSignOutAlt, faBell, faTimes, faEllipsisV, faBars, faUser)
 
 // import UserPhoto from '@/components/user/UserPhoto'
 

@@ -63,7 +63,7 @@ class LessonsController extends Controller
             },
             'query' => Lesson::find()->widthTranslation(lang())
                 ->andWhere([
-                    'id' => Lesson::findByPassageName(lang(), $name)
+                    'id' => Lesson::findByPassageName($name)
                 ])
                 ->parentIsNull()->orderBy('id'),
             'pagination' => false,

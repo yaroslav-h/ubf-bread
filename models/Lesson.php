@@ -6,6 +6,7 @@ use app\components\ActiveRecord;
 use app\components\helpers\StringHelper;
 use app\models\edges\LessonReadByUser;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
 /**
@@ -194,10 +195,21 @@ class Lesson extends ActiveRecord
         $lang = lang();
         if($year) {
             $data = self::getDb()
-                ->createCommand('select chapter, count(*) as total from (select JSON_UNQUOTE(JSON_EXTRACT(passage_json, \'$[0]\')) as chapter from lessons where lang=:lang and year(date)=:y and parent_id is null and deleted_at is null) as chapters group by chapter')
+                ->createCommand('select lang, chapter, count(*) as total from (select lang, JSON_UNQUOTE(JSON_EXTRACT(passage_json, \'$[0]\')) as chapter from lessons where year(date)=:y and deleted_at is null) as t group by lang, chapter')
                 ->bindParam(':y', $year)
-                ->bindParam(':lang', $lang)
                 ->queryAll();
+
+
+            if($data) {
+                $langs = array_values(ArrayHelper::map($data, 'lang', 'lang'));
+                $showLang = in_array($lang, $langs) ? $lang : $langs[0];
+                $data = array_filter($data, function ($item) use ($showLang) {
+                    return $item['lang'] == $showLang;
+                });
+                $data = array_values($data);
+            }
+
+
         } else {
             $data = self::getDb()
                 ->createCommand('select chapter, count(*) as total from (select JSON_UNQUOTE(JSON_EXTRACT(passage_json, \'$[0]\')) as chapter from lessons where lang=:lang and deleted_at is null) as chapters group by chapter')

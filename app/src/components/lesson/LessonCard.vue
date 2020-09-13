@@ -6,7 +6,7 @@
         <div>{{getDayName}}</div>
       </div>
       <div class="w-100">
-        <div class="h5"><fa v-if="lesson.is_intro" icon="play-circle" class="mr-2"/>{{ lesson.title }}</div>
+        <div class="h6"><fa v-if="lesson.is_intro" icon="play-circle" class="mr-2"/>{{ lesson.title }}</div>
         <div><a :href="lesson.passage_link" target="_blank"><fa icon="book-open" class="mr-2"/>{{lesson.passage}}</a></div>
       </div>
       <div v-if="showEye">
