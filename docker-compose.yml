@@ -1,0 +1,49 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+  nginx:
+    image: nginx:1.12-alpine
+    volumes:
+      - ./:/app
+      - ./docker/nginx/vhost.conf:/etc/nginx/conf.d/vhost.conf
+    depends_on:
+      - app
+
+  #  elastic:
+  #    image: elasticsearch:7.4.2
+  #    environment:
+  #      discovery.type: single-node
+  #    volumes:
+  #      - esdata1:/usr/share/elasticsearch/data
+
+  db:
+    image: mysql:latest
+    volumes:
+      - /var/lib/mysql
+      - ./docker/mysql/config.cnf:/etc/mysql/conf.d/config.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
+
+  redis:
+    image: bitnami/redis:latest
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+
+#volumes:
+#  esdata1:
+#    driver: local

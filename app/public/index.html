@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <script>window._sharedData = null;</script>
+    <script src="https://www.google.com/recaptcha/api.js?render=xxx"></script>
+    <style>
+        #loader-wrapper {
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 26px;
+            width: 100vw;
+            height: 100vh;
+            letter-spacing: 12px;
+        }
+
+        .grecaptcha-badge {
+            visibility: hidden;
+        }
+
+        .gooey {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 142px;
+            height: 40px;
+            margin: -20px 0 0 -71px;
+            background: #fff;
+            filter: contrast(20);
+        }
+
+        .gooey .dot {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 12px;
+            left: 15px;
+            filter: blur(4px);
+            background: #343a40;
+            border-radius: 50%;
+            transform: translateX(0);
+            animation: dot 1.5s infinite;
+        }
+
+        .gooey .dots {
+            transform: translateX(0);
+            margin-top: 12px;
+            margin-left: 31px;
+            animation: dots 2.8s infinite;
+        }
+
+        .gooey .dots span {
+            display: block;
+            float: left;
+            width: 16px;
+            height: 16px;
+            margin-left: 16px;
+            filter: blur(4px);
+            background: #343a40;
+            border-radius: 50%;
+        }
+
+        @-moz-keyframes dot {
+            50% {
+                transform: translateX(96px);
+            }
+        }
+
+        @-webkit-keyframes dot {
+            50% {
+                transform: translateX(96px);
+            }
+        }
+
+        @-o-keyframes dot {
+            50% {
+                transform: translateX(96px);
+            }
+        }
+
+        @keyframes dot {
+            50% {
+                transform: translateX(96px);
+            }
+        }
+
+        @-moz-keyframes dots {
+            50% {
+                transform: translateX(-31px);
+            }
+        }
+
+        @-webkit-keyframes dots {
+            50% {
+                transform: translateX(-31px);
+            }
+        }
+
+        @-o-keyframes dots {
+            50% {
+                transform: translateX(-31px);
+            }
+        }
+
+        @keyframes dots {
+            50% {
+                transform: translateX(-31px);
+            }
+        }
+    </style>
+</head>
+<body>
+<noscript>
+    <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled.
+        Please enable it to continue.</strong>
+</noscript>
+<div id="app">
+    <div id="loader-wrapper">
+        <div class="gooey"><span class="dot"></span>
+            <div class="dots"><span></span><span></span><span></span></div>
+        </div>
+    </div>
+</div>
+<!-- built files will be auto injected -->
+</body>
+</html>

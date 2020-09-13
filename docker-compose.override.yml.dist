@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+
+  nginx:
+    ports:
+      - 9001:80
+
+  db:
+    ports:
+      - 41000:3306
+
+#  elastic:
+#    ports:
+#      - 9200:9200
+#      - 9300:9300
