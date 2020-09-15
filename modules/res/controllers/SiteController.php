@@ -7,6 +7,7 @@ namespace res\controllers;
 use app\components\actions\SetLocale;
 use Yii;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 use res\Module;
 use res\Controller;
@@ -67,6 +68,26 @@ class SiteController extends Controller
         } else {
             throw new ServerErrorHttpException('Unable to recover password.');
         }
+    }
+
+    public function actionVerses($passage)
+    {
+        $baseUrls = [
+            LOCALE_UK_UA => 'http://bible.ubf.org.ua/ukr/?scr=',
+            LOCALE_EN_US => 'http://bible.ubf.org.ua/ukr/?scr=',
+            LOCALE_RU_RU => 'http://bible.ubf.org.ua/rst/?scr=',
+        ];
+
+        $html = file_get_contents($baseUrls[lang()] . urlencode($passage));
+
+        $doc = new \DOMDocument();
+        $doc->loadHTML($html);
+        $mainText = $doc->getElementById('mainText');
+        $childNodeList = $mainText->getElementsByTagName('div');
+
+        return [
+            'content' => $childNodeList->length ? $childNodeList->item(0)->nodeValue : false
+        ];
     }
 
     public function actionLogin()

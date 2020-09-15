@@ -2,7 +2,7 @@
   <div id="app" class="pb-3" :class="{dark: isDarkMode}">
     <router-view/>
 
-    <base-dialog :as-menu="true" :title="$t('select a language')" :do-show="$store.getters.getUI.showLangSelector" :show-footer="false"
+    <base-dialog :as-menu="true" :title="$t('Select a language')" :do-show="$store.getters.getUI.showLangSelector" :show-footer="false"
                  @close="$store.dispatch('uiCloseLangSelector')">
       <template v-slot:actions="">
         <a @click.prevent="setLocale(locale.code)" href="#" v-for="locale in $store.getters.getUI.locales" :key="locale.code" class="btn btn-link" :class="{disabled: locale.locale === $store.getters.getUILangLocale}">

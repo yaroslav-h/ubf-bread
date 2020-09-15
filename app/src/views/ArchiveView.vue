@@ -5,8 +5,8 @@
       <div class="d-flex align-items-center">
         <div class="w-100">{{ showChapterName }}</div>
         <div>
-          <base-dropdown-menu header="Select a year" dir="right" icon="" :label="(yearView || 'All') + ` (${getLessonsBySelectedChapterByYear.length})`">
-            <router-link :to="{name:'ArchiveChapter', params: {chapter: showChapterName}}" key="0" class="dropdown-item">All</router-link>
+          <base-dropdown-menu header="Select a year" dir="right" icon="" :label="(yearView || $t('All')) + ` (${getLessonsBySelectedChapterByYear.length})`">
+            <router-link :to="{name:'ArchiveChapter', params: {chapter: showChapterName}}" key="0" class="dropdown-item">{{$t('All')}}</router-link>
             <router-link :to="{name:'ArchiveChapter', params: {chapter: showChapterName}, query: {year:yyyy}}" v-for="yyyy in [...getYearsBySelectedChapter].reverse()" :key="yyyy" class="dropdown-item">{{ yyyy }}</router-link>
           </base-dropdown-menu>
         </div>
@@ -22,7 +22,7 @@
       </div>
       <div v-else>
         <div class="card mt-2" v-if="!isLoading">
-          <div class="card-header">Years</div>
+          <div class="card-header">{{$t('Years')}}</div>
           <div class="card-body">
             <ul class="nav nav-pills nav-years">
               <li class="nav-item">
@@ -35,7 +35,7 @@
           </div>
         </div>
         <div class="card mt-2" v-if="!isLoading">
-          <div class="card-header">Chapters</div>
+          <div class="card-header">{{$t('Chapters')}}</div>
           <div class="card-body">
             <ul v-if="!isLoadingsChaptersForYear[year]" class="nav nav-pills nav-chapters mt-2">
               <li class="nav-item" v-for="item in getChapters" :key="item.chapter">

@@ -28,13 +28,13 @@
                 <a class="nav-link"><fa icon="plus"/></a>
             </router-link>-->
             <router-link tag="li" :to="{ name: 'Calendar' }" class="nav-item" exact-active-class="active">
-              <a class="nav-link"><fa icon="calendar"/> {{ $t('calendar') }}</a>
+              <a class="nav-link"><fa icon="calendar"/> {{ $t('Calendar') }}</a>
             </router-link>
             <router-link tag="li" :to="{ name: 'Archive' }" class="nav-item" active-class="active">
-              <a class="nav-link"><fa icon="archive"/> {{ $t('archive') }}</a>
+              <a class="nav-link"><fa icon="archive"/> {{ $t('Archive') }}</a>
             </router-link>
             <router-link tag="li" :to="{ name: 'About' }" class="nav-item" active-class="active">
-              <a class="nav-link"><fa icon="info-circle"/> {{ $t('about') }}</a>
+              <a class="nav-link"><fa icon="info-circle"/> {{ $t('About') }}</a>
             </router-link>
           </ul>
           <ul class="navbar-nav my-2 my-md-0">
@@ -44,7 +44,7 @@
             </router-link>
 
             <router-link v-if="!isLoggedIn" tag="li" :to="{ name: 'Login' }" class="nav-item" exact-active-class="active">
-              <a class="nav-link"><fa icon="sign-in-alt"/> {{ $t('login') }}</a>
+              <a class="nav-link"><fa icon="sign-in-alt"/> {{ $t('Login') }}</a>
             </router-link>
 
             <li class="nav-item">
