@@ -102,7 +102,7 @@ export default new Vuex.Store({
     isLoadingLessonById: (_1, _2, _3, rootGetters) => id => rootGetters['loading/has']('loadLessonById', id),
     isLoadingLessonsByDate: (_1, _2, _3, rootGetters) => date => rootGetters['loading/has']('loadLessonsByDate', date),
     isLoadingLessonsByMonth: (_1, _2, _3, rootGetters) => date => rootGetters['loading/has']('loadLessonsByMonth', date),
-    isLoadingLessonsByChapter: (_1, _2, _3, rootGetters) => chapter => rootGetters['loading/has']('isLoadingLessonsByChapter', chapter),
+    isLoadingLessonsByChapter: (_1, _2, _3, rootGetters) => chapter => rootGetters['loading/has']('loadLessonsByChapter', chapter),
     isMarkingLessonAsRead: (_1, _2, _3, rootGetters) => id => rootGetters['loading/has']('markLessonAsRead', id)
   },
   actions: {
@@ -169,7 +169,7 @@ export default new Vuex.Store({
       } catch (err) {
         console.error(err)
       }
-      dispatch('loading/end', `loadLessonsByMonth/${chapter}`, { root: true })
+      dispatch('loading/end', `loadLessonsByChapter/${chapter}`, { root: true })
     },
     async markLessonAsRead ({ dispatch, commit, getters }, id) {
       if (getters.isMarkingLessonAsRead(id)) return null

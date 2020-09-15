@@ -15,6 +15,16 @@
         <fa icon="archive"/>
       </router-link>
     </div>
+    <div v-if="isLoggedIn">
+      <router-link :to="{ name: 'Profile' }" class="profile">
+        <fa icon="user"/>
+      </router-link>
+    </div>
+    <div v-else>
+      <router-link :to="{ name: 'Login' }" class="login">
+        <fa icon="sign-in-alt"/>
+      </router-link>
+    </div>
     <!--<div v-if="isLoggedIn">
       <router-link v-if="!isActivityPage" :to="{ name: 'Activity' }" class="activity">
         <fa icon="bell"/>

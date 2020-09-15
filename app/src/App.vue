@@ -2,13 +2,13 @@
   <div id="app" class="pb-3" :class="{dark: isDarkMode}">
     <router-view/>
 
-    <base-dialog :title="$t('select a language')" :do-show="$store.getters.getUI.showLangSelector" :show-footer="false"
+    <base-dialog :as-menu="true" :title="$t('select a language')" :do-show="$store.getters.getUI.showLangSelector" :show-footer="false"
                  @close="$store.dispatch('uiCloseLangSelector')">
-      <div class="list-group">
-        <a @click.prevent="setLocale(locale.code)" href="#" v-for="locale in $store.getters.getUI.locales" :key="locale.code" class="list-group-item" :class="{active: locale.locale === $store.getters.getUILangLocale}">
+      <template v-slot:actions="">
+        <a @click.prevent="setLocale(locale.code)" href="#" v-for="locale in $store.getters.getUI.locales" :key="locale.code" class="btn btn-link" :class="{disabled: locale.locale === $store.getters.getUILangLocale}">
           <span style="text-transform: uppercase">{{locale.code}}</span> - {{locale.name}}
         </a>
-      </div>
+      </template>
     </base-dialog>
 
   </div>
@@ -154,6 +154,10 @@ body.dark {
   }
   .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
     background-color: #215598;
+  }
+  .menu-bottom {
+    background: #343a40 !important;
+    border-color: #393f45 !important;
   }
 }
 </style>

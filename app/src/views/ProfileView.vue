@@ -11,7 +11,26 @@
     </base-page-header>
 
     <base-page-body>
-      {{user}}
+      <div class="card mt-2">
+        <div class="card-body">
+          <div class="d-flex justify-content-center">
+            <div class="font-weight-bold">Name</div>
+            <div class="ml-2">{{user.name}}</div>
+          </div>
+          <div class="d-flex justify-content-center">
+            <div class="font-weight-bold">Email</div>
+            <div class="ml-2">{{user.email}}</div>
+          </div>
+          <div class="d-flex justify-content-center">
+            <div class="font-weight-bold">Group</div>
+            <div class="ml-2">{{user.group}}</div>
+          </div>
+          <div class="d-flex justify-content-center">
+            <div class="font-weight-bold">Member since</div>
+            <div class="ml-2">{{user.created_at}}</div>
+          </div>
+        </div>
+      </div>
     </base-page-body>
 
   </main-layout>

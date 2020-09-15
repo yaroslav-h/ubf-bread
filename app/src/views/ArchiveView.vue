@@ -201,22 +201,6 @@ export default {
       width: 100%;
     }
   }
-  .list-group-item {
-    flex-direction: column;
-    align-items: flex-start !important;
-    .date {
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start !important;
-      > div {
-        margin-right: .5rem;
-      }
-    }
-    .opts {
-      width: 100%;
-      justify-content: space-between;
-    }
-  }
 }
 
 </style>

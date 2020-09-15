@@ -7,19 +7,14 @@
     <div class="w-100">
       <div>
         <div class="h6 mb-0"><fa v-if="lesson.is_intro" icon="play-circle" class="mr-2"/>{{ lesson.title }}</div>
-        <div><fa icon="book-open" class="mr-2"/>{{lesson.passage}}</div>
+        <div class="passage"><fa icon="book-open" class="mr-2"/>{{lesson.passage}}</div>
       </div>
     </div>
     <div class="d-flex align-items-center opts">
-      <div>
-        <div class="d-flex ws-nw">
-          <div v-if="lesson.is_passed"><fa icon="check-circle"/> Passed</div>
-          <div v-else-if="lesson.is_read"><fa icon="check"/> Read</div>
-
-          <div class="ml-2"><fa icon="eye"/> {{lesson.user_reads_count}}</div>
-          <div class="ml-2"><fa icon="paper-plane"/> {{lesson.testimonies_count}}</div>
-        </div>
+      <div class="dt">
+        {{lesson.passage}} / <b>{{ formattedDay }}</b> <small>{{ formattedMonYear }}</small>
       </div>
+      <lesson-counters :lesson="lesson"/>
     </div>
   </router-link>
 </template>
@@ -28,10 +23,12 @@
 import moment from 'moment'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCheck, faCheckCircle, faQuestion } from '@fortawesome/free-solid-svg-icons'
+import LessonCounters from '@/components/lesson/LessonCounters'
 library.add(faCheck, faCheckCircle, faQuestion)
 
 export default {
   name: 'LessonItem',
+  components: { LessonCounters },
   props: {
     lesson: {
       required: true
@@ -53,6 +50,46 @@ export default {
   text-decoration: none !important;
   .date, .opts {
     color: #343434;
+  }
+  .h6 {
+    font-size: 18px;
+  }
+  .passage {
+    font-size: 14px;
+  }
+  .opts {
+    font-size: 14px;
+    .dt {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .lesson-item {
+    flex-direction: column;
+    align-items: flex-start !important;
+
+    .date {
+      display: none;
+    }
+    .h6 {
+      font-size: 16px;
+    }
+    .passage {
+      display: none;
+    }
+    .opts {
+      font-size: 14px;
+      justify-content: space-between;
+      width: 100%;
+      .dt {
+        display: block;
+      }
+      .st > span {
+        display: none;
+      }
+    }
   }
 }
 </style>
