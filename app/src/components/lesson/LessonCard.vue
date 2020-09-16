@@ -24,13 +24,20 @@
       <lesson-counters :lesson="lesson"/>
       <div v-if="isLoggedIn">
 
-        <button v-if="lesson.is_read && !lesson.is_passed"
+        <router-link v-if="lesson.is_read && lesson.passed_id" :to="{name: 'LessonTestimonyView', params: {id: lesson.id}}"
                 class="btn" :class="{'btn-primary': !lesson.is_passed, 'btn-default': lesson.is_passed}">
-          Testimony <fa v-if="lesson.is_passed" icon="check-circle" class="ml-2"/>
-        </button>
-        <button v-else :disabled="isMarkingAsRead || lesson.is_read" @click="onMarkAsRead"
+          {{ $t('Testimony') }}
+          <fa v-if="lesson.is_passed" icon="check-circle" class="ml-1"/>
+          <fa v-else icon="edit" class="ml-1"/>
+        </router-link>
+        <router-link v-else :to="{name: 'LessonTestimonyEditView', params: {id: lesson.id}}"
+                class="btn btn-primary">
+          <fa icon="plus-circle" class="mr-1"/> {{ $t('Testimony') }}
+        </router-link>
+
+        <button v-if="!lesson.is_read" :disabled="isMarkingAsRead || lesson.is_read" @click="onMarkAsRead"
                 class="btn" :class="{'btn-primary': !lesson.is_read, 'btn-default': lesson.is_read}">
-          Mark as read<base-fa-spinner v-if="isMarkingAsRead" class="ml-2"/>
+          {{ $t('Mark as read') }}<base-fa-spinner v-if="isMarkingAsRead" class="ml-2"/>
         </button>
 
       </div>
@@ -41,10 +48,10 @@
 <script>
 import moment from 'moment'
 import BaseFaSpinner from '@/components/base/BaseFaSpinner'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faPlayCircle, faBookOpen, faEye, faTimes, faPaperPlane, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import LessonCounters from '@/components/lesson/LessonCounters'
-library.add(faPlayCircle, faBookOpen, faEye, faTimes, faPaperPlane, faCheckCircle)
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faPlayCircle, faBookOpen, faEye, faTimes, faPaperPlane, faCheckCircle, faEdit, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
+library.add(faPlayCircle, faBookOpen, faEye, faTimes, faPaperPlane, faCheckCircle, faEdit, faPlusCircle)
 
 export default {
   name: 'LessonCard',

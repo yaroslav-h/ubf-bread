@@ -6,6 +6,7 @@ import loading from './modules/loading'
 import site from './modules/site'
 import LessonsService from '@/services/LessonsService'
 import SiteService from '@/services/SiteService'
+import TestimoniesService from '@/services/TestimoniesService'
 
 Vue.use(Vuex)
 
@@ -23,7 +24,10 @@ export default new Vuex.Store({
     lessons: {},
     lessonsIdsByDate: {},
     lessonsIdsByMonth: {},
-    lessonsIdsByChapter: {}
+    lessonsIdsByChapter: {},
+    testimonies: {},
+    testimonyByLesson: {},
+    testimoniesIdsByKey: {}
   },
   mutations: {
     addError (state, error) {
@@ -79,6 +83,27 @@ export default new Vuex.Store({
           state.lessons[id].user_reads_count++
         }
       })
+    },
+
+    setTestimonies (state, items) {
+      items.forEach(item => {
+        Vue.set(state.testimonies, item.id, item)
+      })
+    },
+    setTestimoniesByLesson (state, items) {
+      items.forEach(item => {
+        Vue.set(state.testimonyByLesson, item.lesson_id, item.id)
+      })
+    },
+    setTestimoniesByKey (state, { key, items }) {
+      items.forEach(item => {
+        if (state.testimoniesIdsByKey[key] == null) {
+          Vue.set(state.testimoniesIdsByKey, key, [])
+        }
+        if (state.testimoniesIdsByKey[key].indexOf(item.id) === -1) {
+          state.testimoniesIdsByKey[key].push(item.id)
+        }
+      })
     }
   },
   getters: {
@@ -103,7 +128,21 @@ export default new Vuex.Store({
     isLoadingLessonsByDate: (_1, _2, _3, rootGetters) => date => rootGetters['loading/has']('loadLessonsByDate', date),
     isLoadingLessonsByMonth: (_1, _2, _3, rootGetters) => date => rootGetters['loading/has']('loadLessonsByMonth', date),
     isLoadingLessonsByChapter: (_1, _2, _3, rootGetters) => chapter => rootGetters['loading/has']('loadLessonsByChapter', chapter),
-    isMarkingLessonAsRead: (_1, _2, _3, rootGetters) => id => rootGetters['loading/has']('markLessonAsRead', id)
+    isMarkingLessonAsRead: (_1, _2, _3, rootGetters) => id => rootGetters['loading/has']('markLessonAsRead', id),
+
+    getTestimony: state => id => state.testimonies[id] || null,
+    getTestimonyByLesson: (state, getters) => id => state.testimonyByLesson[id] ? getters.getTestimony(state.testimonyByLesson[id]) : null,
+    getTestimoniesIdsByKey: state => key => state.testimoniesIdsByKey[key] || [],
+    getTestimoniesByKey: (state, getters) => key => getters.getTestimoniesIdsByKey(key).map(id => getters.getTestimony(id)),
+    getTestimoniesLatest: (state, getters) => getters.getTestimoniesByKey('latest'),
+    getTestimoniesByLesson: (state, getters) => lesson => getters.getTestimoniesByKey('lesson' + lesson),
+
+    isSavingTestimony: (_1, _2, _3, rootGetters) => rootGetters['loading/has']('saveTestimony'),
+    isLoadingTestimonyById: (_1, _2, _3, rootGetters) => id => rootGetters['loading/has']('loadTestimonyById', id),
+    isLoadingTestimonyByLesson: (_1, _2, _3, rootGetters) => id => rootGetters['loading/has']('loadTestimonyByLesson', id),
+    isLoadingTestimoniesByLessonId: (_1, _2, _3, rootGetters) => id => rootGetters['loading/has']('loadTestimoniesByLessonId', id),
+    isLoadingTestimoniesLatest: (_1, _2, _3, rootGetters) => rootGetters['loading/has']('loadTestimoniesLatest')
+
   },
   actions: {
     bootstrap ({ dispatch, commit }, data) {
@@ -119,12 +158,12 @@ export default new Vuex.Store({
         return null
       }
       dispatch('loading/start', `loadLessonById/${id}`, { root: true })
-      try {
-        const { data } = await LessonsService.view(id)
+      const { data, err } = await LessonsService.view(id)
+      if (err) {
+        console.error(err)
+      } else {
         commit('setLessons', [data])
         commit('setLessonsIdsByDate', [data])
-      } catch (err) {
-        console.error(err)
       }
       dispatch('loading/end', `loadLessonById/${id}`, { root: true })
     },
@@ -180,6 +219,50 @@ export default new Vuex.Store({
       } catch (err) {}
       dispatch('loading/end', `markLessonAsRead/${id}`, { root: true })
     },
+
+    async saveTestimony ({ dispatch, commit, getters }, formData) {
+      if (getters.isSavingTestimony) {
+        return null
+      }
+      dispatch('loading/start', 'saveTestimony', { root: true })
+      try {
+        if (formData.id) {
+          const { data } = await TestimoniesService.edit(formData.id, formData)
+          commit('setTestimonies', [data])
+        } else {
+          const { data } = await TestimoniesService.create(formData)
+          commit('setTestimonies', [data])
+          commit('setTestimoniesByLesson', [data])
+        }
+      } catch (err) { console.error(err) }
+      dispatch('loading/end', 'saveTestimony', { root: true })
+    },
+    async loadTestimonyById ({ dispatch, commit, getters }, id) {
+      if (getters.isLoadingTestimonyById(id)) {
+        return null
+      }
+      dispatch('loading/start', `loadTestimonyById/${id}`, { root: true })
+      try {
+        const { data } = await TestimoniesService.view(id)
+        commit('setTestimonies', [data])
+      } catch (err) { console.error(err) }
+      dispatch('loading/end', `loadTestimonyById/${id}`, { root: true })
+    },
+    async loadTestimonyByLesson ({ dispatch, commit, getters }, id) {
+      if (getters.isLoadingTestimonyByLesson(id)) {
+        return null
+      }
+      dispatch('loading/start', `loadTestimonyByLesson/${id}`, { root: true })
+      const { data, err } = await TestimoniesService.viewByLesson(id)
+      if (err) {
+        dispatch('addError', err)
+      } else {
+        commit('setTestimonies', [data])
+        commit('setTestimoniesByLesson', [data])
+      }
+      dispatch('loading/end', `loadTestimonyByLesson/${id}`, { root: true })
+    },
+
     addError ({ commit }, error) {
       commit('addError', error)
     },

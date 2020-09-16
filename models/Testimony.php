@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\models\traits\ContentJsonAttribute;
 use Yii;
 
 /**
@@ -10,6 +11,7 @@ use Yii;
  * @property int $id
  * @property int $lesson_id
  * @property string|null $content_json
+ * @property int $is_published
  * @property int $created_by
  * @property int|null $created_at
  *
@@ -18,24 +20,14 @@ use Yii;
  */
 class Testimony extends \yii\db\ActiveRecord
 {
+    use ContentJsonAttribute;
+
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return 'testimonies';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['lesson_id', 'created_by'], 'required'],
-            [['lesson_id', 'created_by', 'created_at'], 'integer'],
-            [['content_json'], 'string'],
-        ];
     }
 
     /**
@@ -49,6 +41,16 @@ class Testimony extends \yii\db\ActiveRecord
             'content_json' => Yii::t('app', 'Content Json'),
             'created_by' => Yii::t('app', 'Created By'),
             'created_at' => Yii::t('app', 'Created At'),
+        ];
+    }
+
+    public function contentFields()
+    {
+        return [
+            'b' => 'content_body',
+            'c' => 'content_prayer',
+            'd' => 'content_one_word',
+            'v' => 'content_version',
         ];
     }
 
@@ -79,5 +81,19 @@ class Testimony extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \app\models\queries\TestimonyQuery(get_called_class());
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        $this->lesson->updateCounters(['testimonies_count' => 1]);
+    }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+
+        $this->lesson->updateCounters(['testimonies_count' => -1]);
     }
 }

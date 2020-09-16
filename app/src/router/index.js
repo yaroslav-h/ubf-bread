@@ -43,7 +43,19 @@ const routes = [
   {
     path: '/lesson/:id',
     name: 'Lesson',
-    component: () => import('@/views/LessonView')
+    component: () => import('@/views/lesson/LessonView')
+  },
+  {
+    path: '/lesson/:id/testimony',
+    name: 'LessonTestimonyView',
+    component: () => import('@/views/lesson/LessonTestimonyView'),
+    beforeEnter: loginRequired
+  },
+  {
+    path: '/lesson/:id/testimony/edit',
+    name: 'LessonTestimonyEditView',
+    component: () => import('@/views/lesson/LessonTestimonyEditView'),
+    beforeEnter: loginRequired
   },
   {
     path: '/about',

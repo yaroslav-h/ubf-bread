@@ -23,11 +23,11 @@ class Lesson extends \app\models\Lesson
         $ids = ArrayHelper::getColumn($models, 'id');
 
         $read_lessons_ids = getMyId() ? LessonReadByUser::find()->select('lesson_id')->where(['lesson_id' => $ids, 'user_id' => getMyId()])->column() : [];
-        $pass_lessons_ids = getMyId() ? Testimony::find()->select('lesson_id')->where(['lesson_id' => $ids, 'created_by' => getMyId()])->column() : [];
+        $pass_lessons_ids = getMyId() ? Testimony::find()->select('id, lesson_id')->andWhere(['lesson_id' => $ids, 'created_by' => getMyId()])->published()->indexBy('lesson_id')->all() : [];
 
         foreach ($ids as $id) {
             self::$_is_read[$id] = in_array($id, $read_lessons_ids);
-            self::$_is_passed[$id] = in_array($id, $pass_lessons_ids);
+            self::$_is_passed[$id] = ArrayHelper::getValue($pass_lessons_ids[$id] ?? [], 'id');
         }
     }
 
@@ -68,11 +68,37 @@ class Lesson extends \app\models\Lesson
                 return self::$_is_read[$this->id] ?? LessonReadByUser::find()->where(['lesson_id' => $this->id, 'user_id' => getMyId()])->exists();
             },
             'is_passed' => function() {
-                return self::$_is_passed[$this->id] ?? Testimony::find()->where(['lesson_id' => $this->id, 'created_by' => getMyId()])->exists();
+                return (self::$_is_passed[$this->id] ?? $this->getIsPassed()) != null;
+            },
+            'passed_id' => function() {
+                return self::$_is_passed[$this->id] ?? $this->getPassedId();
             },
             'user_reads_count',
             'testimonies_count',
         ];
+    }
+
+    public function getPassedId($createdBy = null)
+    {
+        $createdBy = $createdBy ?: getMyId();
+
+        return Testimony::find()
+            ->select('id')
+            ->andLessonId($this->id)
+            ->andCreatedBy($createdBy)
+            ->scalar() ?: null;
+    }
+
+    public function getIsPassed($createdBy = null)
+    {
+        $createdBy = $createdBy ?: getMyId();
+
+        return Testimony::find()
+            ->select('id')
+            ->andLessonId($this->id)
+            ->andCreatedBy($createdBy)
+            ->published()
+            ->scalar() ?: null;
     }
 
     /**

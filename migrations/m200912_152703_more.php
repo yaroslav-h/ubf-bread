@@ -28,6 +28,7 @@ class m200912_152703_more extends Migration
             'id' => $this->intPk(),
             'lesson_id' => $this->intFk(true),
             'content_json' => 'mediumtext',
+            'is_published' => $this->boolean()->notNull()->defaultValue(0),
             'created_by' => $this->intFk(true),
             'created_at' => $this->integer(),
         ]);

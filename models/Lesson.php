@@ -5,6 +5,7 @@ namespace app\models;
 use app\components\ActiveRecord;
 use app\components\helpers\StringHelper;
 use app\models\edges\LessonReadByUser;
+use app\models\traits\ContentJsonAttribute;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
@@ -25,6 +26,8 @@ use yii\helpers\Json;
  * @property string|null $content_one_word
  * @property string|null $content_version
  * @property int $is_intro
+ * @property int $testimonies_count
+ * @property int $user_reads_count
  * @property int|null $created_at
  * @property int|null $deleted_at
  *
@@ -34,7 +37,7 @@ use yii\helpers\Json;
 class Lesson extends ActiveRecord
 {
 
-    private $_content;
+    use ContentJsonAttribute;
 
     /**
      * {@inheritdoc}
@@ -42,21 +45,6 @@ class Lesson extends ActiveRecord
     public static function tableName()
     {
         return 'lessons';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['lang', 'date', 'title'], 'required'],
-            [['lang', 'is_intro', 'created_at', 'deleted_at'], 'integer'],
-            [['date'], 'safe'],
-            [['content_json'], 'string'],
-            [['title'], 'string', 'max' => 1024],
-            [['passage_json'], 'string', 'max' => 128],
-        ];
     }
 
     /**
@@ -78,6 +66,17 @@ class Lesson extends ActiveRecord
             'is_intro' => Yii::t('app', 'Is Intro'),
             'created_at' => Yii::t('app', 'Created At'),
             'deleted_at' => Yii::t('app', 'Deleted At'),
+        ];
+    }
+
+    public function contentFields()
+    {
+        return [
+            'a' => 'content_key_verse',
+            'b' => 'content_body',
+            'c' => 'content_prayer',
+            'd' => 'content_one_word',
+            'v' => 'content_version',
         ];
     }
 
@@ -124,34 +123,6 @@ class Lesson extends ActiveRecord
     {
         $this->passage_json = StringHelper::fromHumanReadablePassage($value);
     }
-
-    public function getContent($section = null)
-    {
-        if(!is_array($this->_content)) {
-            $this->_content = $this->content_json ? Json::decode($this->content_json) : ['v' => 1];
-        }
-
-        return $section ? ($this->_content[$section] ?? null) : $this->_content;
-    }
-    public function setContent($section = null, $value = null)
-    {
-        $this->getContent();
-        if($section) {
-            $this->_content[$section] = $value;
-        }
-        $this->content_json = Json::encode($this->_content);
-    }
-
-    public function getContent_key_verse() { return $this->getContent('a'); }
-    public function setContent_key_verse($value) { $this->setContent('a', $value); }
-    public function getContent_body() { return $this->getContent('b'); }
-    public function setContent_body($value) { $this->setContent('b', $value); }
-    public function getContent_prayer() { return $this->getContent('c'); }
-    public function setContent_prayer($value) { $this->setContent('c', $value); }
-    public function getContent_one_word() { return $this->getContent('d'); }
-    public function setContent_one_word($value) { $this->setContent('d', $value); }
-    public function getContent_version() { return $this->getContent('v'); }
-    public function setContent_version($value) { $this->setContent('v', $value); }
 
     public static function availableLocales()
     {

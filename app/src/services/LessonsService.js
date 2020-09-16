@@ -27,6 +27,6 @@ export default {
     return await axios.get(`${BASE_URL}/view`, { params: { id } }).catch(handleApiError)
   },
   async markAsRead (id) {
-    return await axios.post(`${BASE_URL}/mark-as-read`, null, { params: { id } })
+    return await axios.post(`${BASE_URL}/mark-as-read`, null, { params: { id } }).catch(handleApiError)
   }
 }

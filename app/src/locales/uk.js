@@ -11,5 +11,16 @@ export const uk = {
   QuoteText: 'Немає нічого важливішого для християнина, ніж щоденно споживати чисте словесне молоко.',
   'Someone in': 'Хтось у',
   'About the project': 'Про проект',
-  'Tips for writing spiritual bread': 'Поради щодо написання духовного хліба'
+  'Tips for writing spiritual bread': 'Поради щодо написання духовного хліба',
+  'One word': 'One word',
+  'Not published': 'Not published',
+  Cancel: 'Cancel',
+  Save: 'Save',
+  Edit: 'Edit',
+  Publish: 'Publish',
+  Prayer: 'Prayer',
+  Create: 'Create',
+  Guidelines: 'Guidelines',
+  Testimony: 'Testimony',
+  'Mark as read': 'Mark as read'
 }
