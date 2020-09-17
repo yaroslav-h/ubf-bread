@@ -24,7 +24,7 @@ class TestimoniesController extends Controller
 
     public function actionIndex($lesson = null, $user = null)
     {
-        $query = Testimony::find()->published()->orderBy(['id' => SORT_DESC]);
+        $query = Testimony::find()->published()->orderBy(['updated_at' => SORT_DESC]);
 
         if($lesson) $query->andLessonId($lesson);
         if($user) $query->andCreatedBy($user);
