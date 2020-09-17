@@ -14,6 +14,7 @@ use Yii;
  * @property int $is_published
  * @property int $created_by
  * @property int|null $created_at
+ * @property int|null $updated_at
  *
  * @property User $createdBy
  * @property Lesson $lesson
@@ -87,7 +88,9 @@ class Testimony extends \yii\db\ActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
 
-        $this->lesson->updateCounters(['testimonies_count' => 1]);
+        if($insert) {
+            $this->lesson->updateCounters(['testimonies_count' => 1]);
+        }
     }
 
     public function afterDelete()

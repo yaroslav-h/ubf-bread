@@ -46,14 +46,26 @@ const routes = [
     component: () => import('@/views/lesson/LessonView')
   },
   {
-    path: '/lesson/:id/testimony',
-    name: 'LessonTestimonyView',
+    path: '/lesson/:id/testimonies',
+    name: 'LessonTestimonies',
+    component: () => import('@/views/lesson/LessonTestimonyListView'),
+    beforeEnter: loginRequired
+  },
+  {
+    path: '/lesson/:id/testimonies/my',
+    name: 'LessonTestimonyMy',
+    component: () => import('@/views/lesson/LessonTestimonyMyView'),
+    beforeEnter: loginRequired
+  },
+  {
+    path: '/lesson/:lesson/testimonies/:testimony',
+    name: 'LessonTestimony',
     component: () => import('@/views/lesson/LessonTestimonyView'),
     beforeEnter: loginRequired
   },
   {
-    path: '/lesson/:id/testimony/edit',
-    name: 'LessonTestimonyEditView',
+    path: '/lesson/:id/testimonies/my/edit',
+    name: 'LessonTestimonyMyEdit',
     component: () => import('@/views/lesson/LessonTestimonyEditView'),
     beforeEnter: loginRequired
   },

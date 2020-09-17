@@ -23,23 +23,17 @@
     <div class="card-footer d-flex justify-content-between align-items-center" v-if="!collapsed">
       <lesson-counters :lesson="lesson"/>
       <div v-if="isLoggedIn">
-
-        <router-link v-if="lesson.is_read && lesson.passed_id" :to="{name: 'LessonTestimonyView', params: {id: lesson.id}}"
-                class="btn" :class="{'btn-primary': !lesson.is_passed, 'btn-default': lesson.is_passed}">
-          {{ $t('Testimony') }}
-          <fa v-if="lesson.is_passed" icon="check-circle" class="ml-1"/>
-          <fa v-else icon="edit" class="ml-1"/>
-        </router-link>
-        <router-link v-else :to="{name: 'LessonTestimonyEditView', params: {id: lesson.id}}"
-                class="btn btn-primary">
-          <fa icon="plus-circle" class="mr-1"/> {{ $t('Testimony') }}
+        <router-link :to="{name: 'LessonTestimonies', params: {id: lesson.id}}" class="btn btn-primary">
+          {{ $t('Testimonies') }}
+          <span v-if="lesson.is_passed"><fa icon="check-circle" class="ml-1"/></span>
+          <span v-else-if="!lesson.is_passed && lesson.passed_id"><fa icon="edit" class="ml-1"/></span>
+          <span v-else-if="lesson.is_read"><fa icon="plus-circle" class="ml-1"/></span>
         </router-link>
 
         <button v-if="!lesson.is_read" :disabled="isMarkingAsRead || lesson.is_read" @click="onMarkAsRead"
-                class="btn" :class="{'btn-primary': !lesson.is_read, 'btn-default': lesson.is_read}">
+                class="btn ml-2" :class="{'btn-primary': !lesson.is_read, 'btn-default': lesson.is_read}">
           {{ $t('Mark as read') }}<base-fa-spinner v-if="isMarkingAsRead" class="ml-2"/>
         </button>
-
       </div>
     </div>
   </div>

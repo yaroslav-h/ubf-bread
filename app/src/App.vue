@@ -146,6 +146,9 @@ body.dark {
       color: white;
     }
   }
+  a.testimony-item {
+    background-color: #414c4f !important;
+  }
   .main-view a {
     color: #aed5ff;
   }

@@ -3,9 +3,9 @@
 
     <base-page-header :has-back-btn="true">
       <div class="d-flex justify-content-between align-items-center">
-        <div>My profile</div>
+        <div>{{ $t('My profile') }}</div>
         <div>
-          <router-link :to="{name: 'Logout'}" class="btn btn-sm btn-link">Logout</router-link>
+          <router-link :to="{name: 'Logout'}" class="btn btn-sm btn-link">{{ $t('Logout') }}</router-link>
         </div>
       </div>
     </base-page-header>
@@ -14,10 +14,10 @@
       <div class="card mt-2">
         <div class="card-body">
           <div class="d-flex justify-content-center">
-            <div class="font-weight-bold">Name</div>
+            <div class="font-weight-bold">{{ $t('User Name') }}</div>
             <div class="ml-2">{{user.name}}</div>
           </div>
-          <div class="d-flex justify-content-center">
+          <!--<div class="d-flex justify-content-center">
             <div class="font-weight-bold">Email</div>
             <div class="ml-2">{{user.email}}</div>
           </div>
@@ -28,7 +28,7 @@
           <div class="d-flex justify-content-center">
             <div class="font-weight-bold">Member since</div>
             <div class="ml-2">{{user.created_at}}</div>
-          </div>
+          </div>-->
         </div>
       </div>
     </base-page-body>

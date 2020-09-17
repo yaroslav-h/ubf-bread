@@ -30,6 +30,15 @@ export default new Vuex.Store({
     testimoniesIdsByKey: {}
   },
   mutations: {
+    resetUserState (state) {
+      state.lessons = {}
+      state.lessonsIdsByDate = {}
+      state.lessonsIdsByMonth = {}
+      state.lessonsIdsByChapter = {}
+      state.testimonies = {}
+      state.testimonyByLesson = {}
+      state.testimoniesIdsByKey = {}
+    },
     addError (state, error) {
       error.time = new Date().getTime()
       state.errors.unshift(error)
@@ -42,7 +51,12 @@ export default new Vuex.Store({
     },
     setLessons (state, items) {
       items.forEach(item => {
-        Vue.set(state.lessons, item.id, item)
+        Vue.set(state.lessons, item.id, {
+          ...item,
+          content: {
+            ...item.content
+          }
+        })
       })
     },
     setLessonsIdsByDate (state, items) {
@@ -87,7 +101,12 @@ export default new Vuex.Store({
 
     setTestimonies (state, items) {
       items.forEach(item => {
-        Vue.set(state.testimonies, item.id, item)
+        Vue.set(state.testimonies, item.id, {
+          ...item,
+          content: {
+            ...item.content
+          }
+        })
       })
     },
     setTestimoniesByLesson (state, items) {
@@ -96,6 +115,9 @@ export default new Vuex.Store({
       })
     },
     setTestimoniesByKey (state, { key, items }) {
+      if (items.length === 0) {
+        Vue.set(state.testimoniesIdsByKey, key, [])
+      }
       items.forEach(item => {
         if (state.testimoniesIdsByKey[key] == null) {
           Vue.set(state.testimoniesIdsByKey, key, [])
@@ -107,6 +129,7 @@ export default new Vuex.Store({
     }
   },
   getters: {
+    identity: (_1, _2, _3, rootGetters) => rootGetters['site/identity'],
     getUI: state => state.UI,
     getUILangLocale: state => state.UI.locale,
     getUIIsDarkMode: state => state.UI.isDarkMode,
@@ -138,6 +161,7 @@ export default new Vuex.Store({
     getTestimoniesByLesson: (state, getters) => lesson => getters.getTestimoniesByKey('lesson' + lesson),
 
     isSavingTestimony: (_1, _2, _3, rootGetters) => rootGetters['loading/has']('saveTestimony'),
+    isPublishingTestimony: (_1, _2, _3, rootGetters) => id => rootGetters['loading/has']('publishTestimony', id),
     isLoadingTestimonyById: (_1, _2, _3, rootGetters) => id => rootGetters['loading/has']('loadTestimonyById', id),
     isLoadingTestimonyByLesson: (_1, _2, _3, rootGetters) => id => rootGetters['loading/has']('loadTestimonyByLesson', id),
     isLoadingTestimoniesByLessonId: (_1, _2, _3, rootGetters) => id => rootGetters['loading/has']('loadTestimoniesByLessonId', id),
@@ -145,13 +169,19 @@ export default new Vuex.Store({
 
   },
   actions: {
+    beforeunload () {
+
+    },
     bootstrap ({ dispatch, commit }, data) {
       dispatch('site/setIdentity', data.user)
       commit('setUIProp', { prop: 'locales', value: data.locales || [] })
       commit('setUIProp', { prop: 'locale', value: data.locale || 'en' })
     },
-    login () {
-      // TODO: add something here
+    login ({ commit }) {
+      commit('resetUserState')
+    },
+    logout ({ commit }) {
+      commit('resetUserState')
     },
     async loadLessonById ({ dispatch, commit, getters }, id) {
       if (getters.isLoadingLessonById(id)) {
@@ -220,22 +250,46 @@ export default new Vuex.Store({
       dispatch('loading/end', `markLessonAsRead/${id}`, { root: true })
     },
 
+    async publishTestimony ({ dispatch, commit, getters }, { id, isPublished }) {
+      if (getters.isPublishingTestimony(id)) {
+        return null
+      }
+      dispatch('loading/start', `publishTestimony/${id}`, { root: true })
+
+      const { data, err } = await TestimoniesService.edit(id, {
+        is_published: isPublished ? 1 : 0
+      })
+      if (err) throw err
+
+      commit('setLessons', [data].filter(d => d.lesson).map(d => d.lesson))
+      commit('setTestimonies', [data])
+
+      dispatch('loading/end', `publishTestimony/${id}`, { root: true })
+    },
     async saveTestimony ({ dispatch, commit, getters }, formData) {
       if (getters.isSavingTestimony) {
         return null
       }
       dispatch('loading/start', 'saveTestimony', { root: true })
-      try {
-        if (formData.id) {
-          const { data } = await TestimoniesService.edit(formData.id, formData)
-          commit('setTestimonies', [data])
-        } else {
-          const { data } = await TestimoniesService.create(formData)
-          commit('setTestimonies', [data])
-          commit('setTestimoniesByLesson', [data])
-        }
-      } catch (err) { console.error(err) }
+
+      let response = { data: null, err: null }
+      if (formData.id) {
+        const { data, err } = await TestimoniesService.edit(formData.id, formData)
+        response = { data, err }
+      } else {
+        const { data, err } = await TestimoniesService.create(formData)
+        response = { data, err }
+      }
+
+      if (response.err) throw response.err
+
+      commit('setLessons', [response.data].filter(d => d.lesson).map(d => d.lesson))
+      commit('setTestimonies', [response.data])
+      commit('setTestimoniesByLesson', [response.data])
+
       dispatch('loading/end', 'saveTestimony', { root: true })
+
+      return response
     },
     async loadTestimonyById ({ dispatch, commit, getters }, id) {
       if (getters.isLoadingTestimonyById(id)) {
@@ -244,6 +298,7 @@ export default new Vuex.Store({
       dispatch('loading/start', `loadTestimonyById/${id}`, { root: true })
       try {
         const { data } = await TestimoniesService.view(id)
+        commit('setLessons', [data].filter(d => d.lesson).map(d => d.lesson))
         commit('setTestimonies', [data])
       } catch (err) { console.error(err) }
       dispatch('loading/end', `loadTestimonyById/${id}`, { root: true })
@@ -257,10 +312,27 @@ export default new Vuex.Store({
       if (err) {
         dispatch('addError', err)
       } else {
+        commit('setLessons', [data].filter(d => d.lesson).map(d => d.lesson))
         commit('setTestimonies', [data])
         commit('setTestimoniesByLesson', [data])
       }
       dispatch('loading/end', `loadTestimonyByLesson/${id}`, { root: true })
+    },
+    async loadTestimoniesByLesson ({ dispatch, commit, getters }, id) {
+      if (getters.isLoadingTestimoniesByLessonId(id)) {
+        return null
+      }
+      dispatch('loading/start', `loadTestimoniesByLessonId/${id}`, { root: true })
+      const { data, err } = await TestimoniesService.listByLesson(id)
+      if (err) {
+        dispatch('addError', err)
+      } else {
+        commit('setLessons', data.filter(d => d.lesson).map(d => d.lesson))
+        commit('setTestimonies', data)
+        commit('setTestimoniesByKey', { key: `lesson${id}`, items: data })
+        commit('setTestimoniesByLesson', data.filter(d => d.created_by === getters.identity.id))
+      }
+      dispatch('loading/end', `loadTestimoniesByLessonId/${id}`, { root: true })
     },
 
     addError ({ commit }, error) {

@@ -17,7 +17,7 @@
       <lesson-counters :lesson="lesson"/>
       <div>
         <router-link class="btn btn-link" :to="{name: 'Lesson', params: {id:lesson.id}}">
-          {{ $t('read') }}
+          {{ $t('Read') }}
         </router-link>
       </div>
     </div>

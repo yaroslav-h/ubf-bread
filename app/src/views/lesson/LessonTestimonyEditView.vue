@@ -2,42 +2,58 @@
   <main-layout>
 
     <base-page-header :has-back-btn="true" v-if="getLesson">
-      {{getLesson.title}}
-      <!--{{ formattedDate(getLesson.date) }}-->
+      <router-link :to="{name: 'LessonTestimonies', params: {id:getLesson.id}}">{{ $t('Testimonies') }}</router-link> / <router-link :to="{name: 'LessonTestimonyMy', params: {id:getLesson.id}}">{{ $t('My') }}</router-link> / {{ getTestimony != null ? $t('Edit') : $t('Add') }}
     </base-page-header>
 
     <base-page-body :is-loading="isLoading && getLesson == null" :not-found="!isLoading && getLesson == null">
 
-      <div class="bg-white p-2">
-        <form @submit.prevent="onSave">
-          <base-form-group :label="$t('Testimony')">
-            <testimony-body-editor v-model="form.body" class="border" style="border-radius: 5px"/>
-          </base-form-group>
-          <base-form-group :label="$t('Prayer')" labelFor="prayer">
-            <textarea id="prayer" name="prayer" v-model="form.prayer" class="form-control"></textarea>
-          </base-form-group>
-          <base-form-group :label="$t('One word')" labelFor="one_word">
-            <base-form-input name="one_word" v-model="form.one_word"/>
-          </base-form-group>
-          <div class="d-flex justify-content-between">
+      <div class="card" v-if="getLesson">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
             <div>
-              <button @click="showGuidelines = true" class="btn btn-link" type="button"><fa icon="info-circle" class="mr-2"/>{{ $t('Guidelines') }}</button>
+              <div>{{getLesson.title}}</div>
+              <div class="small">{{formattedDate(getLesson.date)}}</div>
             </div>
             <div>
-              <button class="btn btn-link" type="button">{{ $t('Cancel') }}</button>
-              <button class="btn btn-primary" :disabled="isSaving" type="submit">
-                {{ getTestimony != null ? $t('Save') : $t('Create') }} <base-fa-spinner v-if="isSaving" class="ml-2"/>
-              </button>
+              <base-passage-link :src="getLesson.passage" :link="getLesson.passage_link"/>
             </div>
           </div>
-        </form>
+        </div>
+        <div class="p-3">
+          {{ getLesson.content.key_verse }}
+        </div>
+        <div class="card-body bg-white">
+          <form @submit.prevent="onSave">
+            <base-form-group :label="$t('Testimony')">
+              <testimony-body-editor v-model="form.body" class="border" style="border-radius: 5px"/>
+            </base-form-group>
+            <base-form-group :label="$t('Prayer')" labelFor="prayer">
+              <textarea id="prayer" name="prayer" v-model="form.prayer" class="form-control"></textarea>
+            </base-form-group>
+            <base-form-group :label="$t('One word')" labelFor="one_word">
+              <base-form-input name="one_word" v-model="form.one_word"/>
+            </base-form-group>
+            <div class="d-flex justify-content-between">
+              <div>
+                <button @click="showGuidelines = true" class="btn btn-link" type="button"><fa icon="info-circle" class="mr-2"/>{{ $t('Guidelines') }}</button>
+              </div>
+              <div>
+                <button class="btn btn-link" @click="onCancel" type="button">{{ $t('Cancel') }}</button>
+                <button class="btn btn-primary" :disabled="isSaving" type="submit">
+                  {{ getTestimony != null ? $t('Save') : $t('Create') }} <base-fa-spinner v-if="isSaving" class="ml-2"/>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div></div>
       </div>
 
     </base-page-body>
 
     <base-dialog :title="$t('Guidelines')" :do-show="showGuidelines" @close="showGuidelines = false">
-      <p>Start a new line and type <code>#</code> followed by a <code>space</code> and you will get an H1 headline.
-      </p><p>This feature is called <strong>input rules</strong>. There are some of these shortcuts for the most basic nodes enabled by default. Try <code>#, ##, ###, …</code> for headlines, <code>></code> for blockquotes, <code>- or +</code> for bullet lists. And of course you can add your own input rules.
+      <p>Start a new line and type <code>#</code> followed by a <code>space</code> and you will get an H1 headline.</p>
+      <p>This feature is called <strong>input rules</strong>. There are some of these shortcuts for the most basic nodes enabled by default. Try <code>#, ##, ###, …</code> for headlines, <code>></code> for blockquotes, <code>- or +</code> for bullet lists, <code>1.</code> for ordered lists. And of course you can add your own input rules.
     </p>
     </base-dialog>
 
@@ -56,11 +72,12 @@ import BaseFaSpinner from '@/components/base/BaseFaSpinner'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import BaseDialog from '@/components/base/BaseDialog'
+import BasePassageLink from '@/components/base/BasePassageLink'
 library.add(faInfoCircle)
 
 export default {
   name: 'LessonTestimonyEditView',
-  components: { BaseDialog, BaseFaSpinner, BaseFormInput, BaseFormGroup, TestimonyBodyEditor, BasePageBody, BasePageHeader, MainLayout },
+  components: { BasePassageLink, BaseDialog, BaseFaSpinner, BaseFormInput, BaseFormGroup, TestimonyBodyEditor, BasePageBody, BasePageHeader, MainLayout },
   data () {
     return {
       id: null,
@@ -100,14 +117,21 @@ export default {
       this.$store.dispatch('loadLessonById', route.params.id)
       this.$store.dispatch('loadTestimonyByLesson', route.params.id)
     },
-    onSave () {
-      this.$store.dispatch('saveTestimony', {
+    async onSave () {
+      const { err } = await this.$store.dispatch('saveTestimony', {
         id: this.getTestimony?.id,
         lesson_id: this.id,
         content_body: this.form.body,
         content_prayer: this.form.prayer,
         content_one_word: this.form.one_word
       })
+
+      if (err == null) {
+        this.$router.push({ name: 'LessonTestimonyMy', params: { id: this.id } })
+      }
+    },
+    onCancel () {
+      this.$router.push({ name: 'LessonTestimonyMy', params: { id: this.id } })
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -124,5 +148,8 @@ export default {
 </script>
 
 <style scoped>
-
+  .card-body.bg-white {
+    background: white !important;
+    color: #333333;
+  }
 </style>

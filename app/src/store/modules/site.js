@@ -1,6 +1,7 @@
 import SiteService from '@/services/SiteService'
 
 import Vue from 'vue'
+import axios from 'axios'
 
 const state = {
   identity: null,
@@ -32,6 +33,10 @@ const actions = {
     if (err) throw err
 
     if (data) {
+      if (data?.csrf) {
+        axios.defaults.headers.common['X-CSRF-Token'] = data.csrf
+      }
+
       dispatch('setIdentity', data.user)
       dispatch('login', data.user, { root: true })
 

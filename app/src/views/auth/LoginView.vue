@@ -36,13 +36,13 @@
 
                             <div v-if="scenario === 'default'">
                                 <form @submit.prevent="onLogin" class="text-left">
-                                    <base-form-group :label="$t('username or email')" labelFor="username">
+                                    <base-form-group :label="$t('Username or email')" labelFor="username">
                                         <base-form-input id="username" v-model="section_login.form.username" :error="section_login.errors['username']" />
                                     </base-form-group>
-                                    <base-form-group :label="$t('password')" labelFor="password" label-class="w-100">
+                                    <base-form-group :label="$t('Password')" labelFor="password" label-class="w-100">
                                         <template v-slot:label>
                                             <div class="d-flex justify-content-between">
-                                                <div>{{ $t('password') }}</div>
+                                                <div>{{ $t('Password') }}</div>
                                                 <div>
                                                   <!--<router-link :to="{name: 'RecoverPassword'}">Forgot a password?</router-link>-->
                                                 </div>
@@ -55,9 +55,9 @@
                                     </div>
 
                                     <div class="d-flex w-100 justify-content-center">
-                                      <router-link :to="{name: 'Home'}" class="btn btn-link w-100">{{ $t('cancel') }}</router-link>
-                                        <button class="btn btn-primary w-100" :disabled="isLoggingIn" @click="onLogin" type="button"><base-fa-spinner v-if="isLoggingIn && section_login.provider == null"/>
-                                          {{ $t('login') }}</button>
+                                      <router-link :to="{name: 'Home'}" class="btn btn-link w-100">{{ $t('Cancel') }}</router-link>
+                                        <button class="btn btn-primary w-100" :disabled="isLoggingIn" @click="onLogin" type="submit"><base-fa-spinner v-if="isLoggingIn && section_login.provider == null"/>
+                                          {{ $t('Login') }}</button>
                                         <!--<button class="btn btn-link w-100" :disabled="isLoggingIn" @click="onShowSignup" type="button">Sign up</button>-->
                                     </div>
                                 </form>
@@ -129,10 +129,10 @@
                 </div>
 
                 <div class="text-center">
-                    <small>
-                        By singing up, you agree to the <router-link :to="{name: 'InfoTerms'}">Terms of Service</router-link> and <router-link :to="{name: 'InfoPrivacy'}">Privacy Policy</router-link>, including <router-link :to="{name: 'InfoCookie'}">Cookie Use</router-link>.
+                    <!--<small>
+                        By singing in, you agree to the <router-link :to="{name: 'InfoTerms'}">Terms of Service</router-link> and <router-link :to="{name: 'InfoPrivacy'}">Privacy Policy</router-link>, including <router-link :to="{name: 'InfoCookie'}">Cookie Use</router-link>.
                         <span v-if="hasRecaptchaV3">This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.</span>
-                    </small>
+                    </small>-->
                     <p class="copyright text-muted mt-3 mb-0">UBF Kyiv {{ new Date().getFullYear() }}</p>
                 </div>
             </div>

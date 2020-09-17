@@ -9,14 +9,14 @@ export default {
     return await axios.get(`${BASE_URL}/index`).catch(handleApiError)
   },
   async listByLesson (id) {
-    return await axios.get(`${BASE_URL}/index`, { params: { user: id } }).catch(handleApiError)
+    return await axios.get(`${BASE_URL}/index`, { params: { lesson: id } }).catch(handleApiError)
   },
   async listByUser (id) {
     return await axios.get(`${BASE_URL}/index`, { params: { user: id } }).catch(handleApiError)
   },
 
   async view (id) {
-    return await axios.get(`${BASE_URL}/view`, { params: { id } }).catch(handleApiError)
+    return await axios.get(`${BASE_URL}/view`, { params: { id, expand: 'lesson' } }).catch(handleApiError)
   },
   async viewByLesson (lesson) {
     return await axios.get(`${BASE_URL}/view`, { params: { lesson } }).catch(handleApiError)

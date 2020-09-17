@@ -31,6 +31,7 @@ class m200912_152703_more extends Migration
             'is_published' => $this->boolean()->notNull()->defaultValue(0),
             'created_by' => $this->intFk(true),
             'created_at' => $this->integer(),
+            'updated_at' => $this->integer(),
         ]);
         $this->createFk('testimonies', 'lesson_id', 'lessons');
         $this->createFk('testimonies', 'created_by', 'users');

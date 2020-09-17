@@ -95,7 +95,7 @@ class SiteController extends Controller
         $model = new LoginForm();
 
         if($model->load(post(), '') && $model->login()) {
-            return Module::sharedState();
+            return Module::initialState();
         } elseif($model->hasErrors()) {
             return $this->unprocessable($model);
         } else {

@@ -19,8 +19,8 @@ return [
         LOCALE_RU_RU => 'ru-RU',
     ],
     'availableLocales' => [
-        ['code' => 'uk', 'locale' => 'uk-UA', 'name' => 'Ukrainian', 'lang' => LANG_UK_UA],
-        ['code' => 'ru', 'locale' => 'ru-RU', 'name' => 'Russian', 'lang' => LANG_RU_RU],
+        ['code' => 'uk', 'locale' => 'uk-UA', 'name' => 'Українська', 'lang' => LANG_UK_UA],
+        ['code' => 'ru', 'locale' => 'ru-RU', 'name' => 'Русский', 'lang' => LANG_RU_RU],
         ['code' => 'en', 'locale' => 'en-US', 'name' => 'English', 'lang' => LANG_EN_US],
     ]
 ];
