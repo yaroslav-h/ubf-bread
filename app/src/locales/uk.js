@@ -36,9 +36,16 @@ export const uk = {
   Logout: 'Вийти',
   Login: 'Увійти',
   Password: 'Пароль',
+  Next: 'Next',
+  Previous: 'Previous',
   'Username or email': 'Логін або email',
   'My profile': 'Мій профіль',
   'Learn Bible': 'Дізнайся Біблію',
-  'There are some testimonies that being written': 'Є кілька свідчень, які пишуться'
+  'There are some testimonies that being written': 'Є кілька свідчень, які пишуться',
+  'If you want you can use a quiz mode to compose your testimony step by step': 'Якщо ви хочете, ви можете використовувати режим \'quiz\', щоб скласти своє свідчення поетапно',
+  'Use it if you are new to this': 'Використовуйте його, якщо ви новачок у цьому',
+  'Go to a quiz mode': 'Перейти в \'quiz\' режим',
+  'You have not filled up main blocks': 'Ви не заповнили основні блоки',
+  'Well done. Click \'Create\' to compose your testimony': 'Добре, а тепер клацніть \'Створити\', щоб скомпонувати своє свідчення'
 
 }

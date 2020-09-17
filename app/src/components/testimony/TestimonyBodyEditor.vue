@@ -38,7 +38,7 @@ export default {
   },
   watch: {
     value (value) {
-      if (this.editor && value !== this.value) {
+      if (this.editor) {
         this.editor.setContent(value)
       }
     }

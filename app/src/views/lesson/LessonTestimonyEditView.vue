@@ -23,6 +23,15 @@
           {{ getLesson.content.key_verse }}
         </div>
         <div class="card-body bg-white">
+
+          <div v-if="!getTestimony" class="text-center">
+            <div>{{ $t('If you want you can use a quiz mode to compose your testimony step by step') }}</div>
+            <div class="small">{{ $t('Use it if you are new to this') }}</div>
+            <div class="my-2">
+              <router-link :to="{name:'LessonTestimonyMyEditQuiz', params: {id:getLesson.id}}" class="btn btn-primary">{{ $t('Go to a quiz mode') }}</router-link>
+            </div>
+          </div>
+
           <form @submit.prevent="onSave">
             <base-form-group :label="$t('Testimony')">
               <testimony-body-editor v-model="form.body" class="border" style="border-radius: 5px"/>
@@ -39,7 +48,7 @@
               </div>
               <div>
                 <button class="btn btn-link" @click="onCancel" type="button">{{ $t('Cancel') }}</button>
-                <button class="btn btn-primary" :disabled="isSaving" type="submit">
+                <button class="btn btn-primary" :disabled="isSaving || !canSave" type="submit">
                   {{ getTestimony != null ? $t('Save') : $t('Create') }} <base-fa-spinner v-if="isSaving" class="ml-2"/>
                 </button>
               </div>
@@ -104,6 +113,9 @@ export default {
     },
     getTestimony () {
       return this.$store.getters.getTestimonyByLesson(this.id)
+    },
+    canSave () {
+      return this.form.body
     }
   },
   watch: {

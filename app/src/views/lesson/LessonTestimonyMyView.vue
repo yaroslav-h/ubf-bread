@@ -39,12 +39,12 @@
 
         <div class="card-body">
           <div class="editor__content" v-html="getTestimony.content.body"></div>
-          <div v-if="getTestimony.content.prayer"><strong>Prayer:</strong> {{ getTestimony.content.prayer }}</div>
-          <div v-if="getTestimony.content.one_word"><strong>One word:</strong> {{ getTestimony.content.one_word }}</div>
+          <div v-if="getTestimony.content.prayer"><strong>{{$t('Prayer')}}:</strong> {{ getTestimony.content.prayer }}</div>
+          <div v-if="getTestimony.content.one_word"><strong>{{$t('One word')}}:</strong> {{ getTestimony.content.one_word }}</div>
         </div>
         <div class="card-footer">
 
-          <div v-if="getTestimony.created_by === user.id" class="d-flex align-items-center justify-content-between">
+          <div v-if="getTestimony.created_by === user.id" class="d-flex align-items-center justify-content-between opts">
             <div>
               <span v-if="!getTestimony.is_published" class="badge badge-warning ml-2">
                 {{ $t('Not published') }}
@@ -154,6 +154,17 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style  lang="scss" scoped>
+@media (max-width: 767px) {
+  .card-header > div {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .opts {
+    flex-direction: column !important;
+    & > div {
+      margin-bottom: .5rem;
+    }
+  }
+}
 </style>

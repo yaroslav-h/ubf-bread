@@ -20,7 +20,7 @@
       </div>
     </base-page-header>
 
-    <base-page-body :is-loading="isLoading && getLesson == null" :not-found="!isLoading && getLesson == null">
+    <base-page-body :is-loading="isLoading && (getLesson == null || !getTestimonies.length)" :not-found="!isLoading && getLesson == null">
 
       <div v-if="!isLoading && getLesson && getLesson.testimonies_count === 0 && getTestimonies.length === 0" class="text-center p-3">
         {{ $t('The list is empty') }}

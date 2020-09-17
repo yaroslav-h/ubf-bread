@@ -70,6 +70,12 @@ const routes = [
     beforeEnter: loginRequired
   },
   {
+    path: '/lesson/:id/testimonies/my/edit/quiz',
+    name: 'LessonTestimonyMyEditQuiz',
+    component: () => import('@/views/lesson/LessonTestimonyEditQuizView'),
+    beforeEnter: loginRequired
+  },
+  {
     path: '/about',
     name: 'About',
     component: () => import('@/views/AboutView')

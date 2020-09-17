@@ -27,4 +27,7 @@ export default {
 div {
   display: inline;
 }
+a {
+  white-space: nowrap;
+}
 </style>
