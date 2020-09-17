@@ -49,6 +49,9 @@ export default {
     isLoggedIn () {
       return this.$store.getters['site/isLoggedIn']
     },
+    user () {
+      return this.$store.getters['site/identity']
+    },
     formattedDate () {
       return date => moment(date).format('dddd, MMMM Do YYYY')
     },
@@ -72,6 +75,7 @@ export default {
     },
     attributes () {
       const today = moment().startOf('day')
+      let userCreatedAt = null
 
       if (!this.isLoggedIn) {
         return [
@@ -81,6 +85,8 @@ export default {
             dates: new Date()
           }
         ]
+      } else {
+        userCreatedAt = moment(this.user.created_at * 1000)
       }
 
       return [
@@ -99,12 +105,16 @@ export default {
             color = l.is_passed ? 'green' : (l.is_read ? 'yellow' : (d.isSameOrAfter(today) ? false : 'red'))
           }
 
+          if (userCreatedAt && !d.isSameOrAfter(userCreatedAt) && color === 'red') {
+            return null
+          }
+
           return {
             key: l.id,
             bar: color,
             dates: d.toDate()
           }
-        })
+        }).filter(d => d != null)
       ]
     }
   },
