@@ -4,6 +4,7 @@
     "keywords": ["ubf"],
     "minimum-stability": "stable",
     "require": {
+        "ext-pdo": "*",
         "php": ">=7.0",
         "yiisoft/yii2": "~2.0.14",
         "yiisoft/yii2-bootstrap": "~2.0.0",
@@ -14,7 +15,6 @@
         "yiisoft/yii2-httpclient": "^2.0",
         "almasaeed2010/adminlte": "~3.0",
         "yiisoft/yii2-bootstrap4": "^2.0",
-      "ext-pdo": "*",
         "vova07/yii2-imperavi-widget": "*"
     },
     "require-dev": {

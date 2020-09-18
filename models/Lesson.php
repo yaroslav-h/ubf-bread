@@ -145,8 +145,8 @@ class Lesson extends ActiveRecord
     public static function resolveTotalCount($key)
     {
         switch ($key) {
-            case 'user_reads':
-            case 'notes': return 0;
+            case 'reads': return LessonReadByUser::find()->count();
+            case 'testimonies': return Testimony::find()->count();
             case 'default': return self::find()->andWhere('parent_id is null and deleted_at is null')->count();
         }
 

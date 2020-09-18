@@ -44,6 +44,11 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this->andWhere(($alias ? $alias . "." : "") . "parent_id is null");
     }
 
+    public function parentIsNotNull($alias = null)
+    {
+        return $this->andWhere(($alias ? $alias . "." : "") . "parent_id is not null");
+    }
+
     /**
      * {@inheritdoc}
      * @return \app\models\Lesson[]|array

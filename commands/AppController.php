@@ -3,11 +3,13 @@
 namespace app\commands;
 
 
+use app\models\Lesson;
 use app\rbac\RbacEnum;
 use Yii;
 use yii\base\DynamicModel;
 use yii\console\Controller;
 use yii\db\Query;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Console;
 use Minishlink\WebPush\VAPID;
 use yii\helpers\Json;
@@ -140,20 +142,24 @@ class AppController extends Controller
             Console::updateProgress($done, $total, 'inserted');
         }
 
-        $this->stdout('Final step...' . PHP_EOL);
+        $this->stdout('Second step...' . PHP_EOL);
 
         $total = (new Query())->from('lessons')->count();
-        $total-= (new Query())->from((new Query())->select('date')->from('lessons')->groupBy('date')->having('count(*) > 1'))->count();
+        //$total-= (new Query())->from((new Query())->select('date, is_intro')->from('lessons')->groupBy('date, is_intro')->having('count(*) > 1'))->count();
         $done = 0;
         Console::startProgress($done, $total, 'processing');
 
         function getNextLesson($id = null) {
             return (new Query())->from('lessons')
                 ->where('parent_id is null')
-                ->andWhere([
-                    'date' => (new Query())->select('date')->from('lessons')->groupBy('date')->having('count(*) > 1')
+                /*->andWhere([
+                    'date' => (new Query())
+                        ->select('date')
+                        ->from('lessons')
+                        ->groupBy('date')
+                        ->having('count(*) > 1')
                         ->andFilterWhere(['>', 'id', $id])
-                ])
+                ])*/
                 ->andFilterWhere(['>', 'id', $id])
                 ->orderBy('id')
                 ->one();
@@ -168,11 +174,66 @@ class AppController extends Controller
                 'and',
                 ['date' => $lesson['date']],
                 ['is_intro' => $lesson['is_intro']],
-                ['>', 'id', $lesson['id']]
+                ['<>', 'id', $lesson['id']]
             ])->execute();
 
             Console::updateProgress($done, $total, 'processing');
         }
+
+        $this->stdout('Third step...' . PHP_EOL);
+
+        $data = Yii::$app->db
+            ->createCommand('select lang, chapter as name from (select lang, JSON_UNQUOTE(JSON_EXTRACT(passage_json, \'$[0]\')) as chapter from lessons where deleted_at is null) as chapters group by lang, chapter')
+            ->queryAll();
+
+        Yii::$app->db->createCommand()->delete('categories')->execute();
+        Yii::$app->db->createCommand()->batchInsert('categories', [
+            'type', 'lang', 'name', 'alt'
+        ], array_map(function($row) {
+            return [1, $row['lang'], $row['name'], 0];
+        }, array_filter($data, function($row) {
+            return !empty($row['name']);
+        })))->execute();
+
+        $chapters = (new Query())->from('categories')->where(['type' => 1, 'alt' => 0])->all();
+        $total = count($chapters);
+        $done = 0;
+        Console::startProgress($done, $total, 'chapters');
+        foreach ($chapters as $chapter) {
+            Console::updateProgress(++$done, $total, $chapter['name']);
+
+            $data = Yii::$app->db
+                ->createCommand('select id from (select id, JSON_UNQUOTE(JSON_EXTRACT(passage_json, \'$[0]\')) as chapter from lessons) as chapters where chapter=:chapter')
+                ->bindParam(':chapter', $chapter['name'])
+                ->queryAll();
+
+            Yii::$app->db->createCommand()->update('lessons', [
+                'chapter_id' => $chapter['id']
+            ], [
+                'id' => ArrayHelper::getColumn($data, 'id')
+            ])->execute();
+        }
+
+        $this->stdout('Final step...' . PHP_EOL);
+
+        $chapter2parent = (new Query())->select('chapter_id, parent_chapter_id')
+            ->from([
+                'a' => Lesson::find()->asArray()->alias('t')
+                    ->select('t.chapter_id, p.chapter_id as parent_chapter_id, t.parent_id')
+                    ->innerJoinWith('parent p', false)
+                    ->parentIsNotNull('t')
+            ])
+            ->groupBy('chapter_id, parent_chapter_id')
+            ->all();
+
+        foreach ($chapter2parent as $row) {
+            Yii::$app->db->createCommand()->update('categories', [
+                'parent_id' => $row['parent_chapter_id']
+            ], [
+                'id' => $row['chapter_id']
+            ])->execute();
+        }
+
 
         if($this->confirm('Do you want to remove table "bread"?')) {
             $cmd = Yii::$app->db->createCommand()->dropTable('bread');

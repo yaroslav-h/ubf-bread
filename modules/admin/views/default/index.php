@@ -42,8 +42,8 @@ $this->title = Yii::t('app', 'Home');
                 <span class="info-box-icon bg-info elevation-1"><i class="fas fa-eye"></i></span>
 
                 <div class="info-box-content">
-                    <span class="info-box-text">Views</span>
-                    <span class="info-box-number"><?= \app\models\Lesson::totalCount('views')?></span>
+                    <span class="info-box-text">Reads</span>
+                    <span class="info-box-number"><?= \app\models\Lesson::totalCount('reads')?></span>
                 </div>
                 <!-- /.info-box-content -->
             </div>
@@ -55,8 +55,8 @@ $this->title = Yii::t('app', 'Home');
                 <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-comment-alt"></i></span>
 
                 <div class="info-box-content">
-                    <span class="info-box-text">Notes</span>
-                    <span class="info-box-number"><?= \app\models\Lesson::totalCount('notes')?></span>
+                    <span class="info-box-text">Testimonies</span>
+                    <span class="info-box-number"><?= \app\models\Lesson::totalCount('testimonies')?></span>
                 </div>
                 <!-- /.info-box-content -->
             </div>

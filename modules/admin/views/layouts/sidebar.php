@@ -40,6 +40,12 @@ use app\rbac\RbacEnum;
                         'icon' => 'th'/*, 'badge' => '<span class="right badge badge-danger">New</span>'*/
                     ],
                     [
+                        'label' => Yii::t('app', 'Categories'), 'url' => ['/admin/categories/index'],
+                        'active' => Yii::$app->controller->id == 'categories',
+                        'visible' => can(RbacEnum::MODER),
+                        'icon' => 'list'/*, 'badge' => '<span class="right badge badge-danger">New</span>'*/
+                    ],
+                    [
                         'label' => Yii::t('app', 'Users'), 'url' => ['/admin/users/index'],
                         'active' => Yii::$app->controller->id == 'users',
                         'visible' => can(RbacEnum::ADMIN),

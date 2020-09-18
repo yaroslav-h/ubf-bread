@@ -6,13 +6,21 @@ namespace app\components\traits;
 
 trait MigrationTrait
 {
+    /**
+     * @param bool $autoinc
+     * @return string
+     */
     public function intPk($autoinc = true)
     {
         return 'BIGINT UNSIGNED PRIMARY KEY' . ($autoinc ? ' AUTO_INCREMENT' : '');
     }
-    public function intFk($notNull = false)
+
+    /**
+     * @return \yii\db\ColumnSchemaBuilder
+     */
+    public function intFk()
     {
-        return 'BIGINT UNSIGNED' . ($notNull ? ' NOT NULL' : '');
+        return $this->bigInteger()->unsigned();
     }
 
     public function createTable($table, $columns, $options = null)

@@ -15,8 +15,8 @@ class m200912_152703_more extends Migration
     public function safeUp()
     {
         $this->createTable('{{%lesson_read_by_user}}', [
-            'lesson_id' => $this->intFk(true),
-            'user_id' => $this->intFk(true),
+            'lesson_id' => $this->intFk()->notNull(),
+            'user_id' => $this->intFk()->notNull(),
             'read_at' => $this->integer()->notNull(),
             'lang' => $this->integer()->notNull()->defaultValue(0),
             'PRIMARY KEY (lesson_id, user_id)'
@@ -26,10 +26,10 @@ class m200912_152703_more extends Migration
 
         $this->createTable('{{%testimonies}}', [
             'id' => $this->intPk(),
-            'lesson_id' => $this->intFk(true),
+            'lesson_id' => $this->intFk()->notNull(),
             'content_json' => 'mediumtext',
             'is_published' => $this->boolean()->notNull()->defaultValue(0),
-            'created_by' => $this->intFk(true),
+            'created_by' => $this->intFk()->notNull(),
             'created_at' => $this->integer(),
             'updated_at' => $this->integer(),
         ]);
