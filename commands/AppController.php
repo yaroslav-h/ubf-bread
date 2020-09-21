@@ -230,7 +230,7 @@ class AppController extends Controller
             Yii::$app->db->createCommand()->update('categories', [
                 'parent_id' => $row['parent_chapter_id']
             ], [
-                'id' => $row['chapter_id']
+                'id' => $row['chapter_id'],
             ])->execute();
         }
 
