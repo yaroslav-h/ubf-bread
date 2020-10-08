@@ -44,6 +44,7 @@ class SiteController extends Controller
             'signup' => ['post'],
             'logout' => ['post'],
             'recover-password' => ['post'],
+            'set-locale' => ['post'],
         ];
     }
 

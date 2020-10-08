@@ -39,6 +39,8 @@ class SetLocale extends Action
         if($this->callback instanceof \Closure) {
             call_user_func_array($this->callback, [$locale]);
         }
+
+        return '';
     }
 
 }

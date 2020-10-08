@@ -47,7 +47,7 @@ const bootstrap = (state) => {
   }).$mount('#app')
 }
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development' || window.location.pathname === '/') {
   axios.get('/_/site/initial-state', { params: { path: window.location.pathname } })
     .then(({ data }) => bootstrap(data))
 } else {
